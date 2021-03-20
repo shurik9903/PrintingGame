@@ -1,6 +1,7 @@
 package sample;
 
 
+import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,14 +42,15 @@ public class Method {
             return Math.sqrt(this.x * this.x + this.y * this.y);
         }
 
-        public void setLength(double l){
+        public void setLength(double L){
             double currentLength = this.getLength();
-            if (currentLength == 0)
-                return;
+            if (currentLength == 0){
+                this.set(L,0);
+            }else {
+                this.multiply(1 / currentLength);
 
-            this.multiply( 1/currentLength);
-
-            this.multiply(l);
+                this.multiply(L);
+            }
         }
 
         public double getAngle(){
@@ -57,6 +59,7 @@ public class Method {
 
         public void setAngle(double angleDegrees){
             double L = this.getAngle();
+            System.out.println(Math.atan2(this.y, this.x));
             double angleRadian = Math.toRadians(angleDegrees);
             this.x = L * Math.cos(angleRadian);
             this.y = L * Math.sin(angleRadian);
@@ -115,9 +118,18 @@ public class Method {
             this.boundary = new Rectangle();
         }
 
+        public Sprite(String fileImageName, double sizeImage){
+            this();
+            setImage(fileImageName, sizeImage);
+        }
+
         public Sprite(String fileImageName){
             this();
             setImage(fileImageName);
+        }
+
+        public void setImage(String fileImageName, double sizeImage){
+            this.image = new Image(fileImageName, sizeImage,sizeImage,false,false);
         }
 
         public void setImage(String fileImageName){
@@ -149,5 +161,6 @@ public class Method {
         }
 
     }
+
 
 }
