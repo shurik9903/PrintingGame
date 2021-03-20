@@ -8,8 +8,12 @@
 
 <AnchorPane fx:id="APMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
-      <Canvas fx:id="cSpace" height="600.0" width="800.0" />
-      <Canvas fx:id="cMoon" height="115.0" layoutY="355.0" width="800.0" />
+      <ImageView fitHeight="600.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="150.0" fitWidth="800.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Image/Screenshot_1.png" />
+         </image>
+      </ImageView>
       <Canvas fx:id="cBasic" height="470.0" width="800.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <AnchorPane layoutY="470.0" prefHeight="130.0" prefWidth="800.0" style="-fx-background-color: Yellow;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="470.0">
          <children>

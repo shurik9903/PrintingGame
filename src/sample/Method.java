@@ -2,6 +2,7 @@ package sample;
 
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -53,13 +54,16 @@ public class Method {
             }
         }
 
-        public double getAngle(){
-            return Math.toDegrees(Math.atan2(this.y, this.x));
+        public double getAngle()
+        {
+            if (this.getLength() == 0)
+                return 0;
+            else
+                return Math.toDegrees( Math.atan2(this.y, this.x) );
         }
 
         public void setAngle(double angleDegrees){
-            double L = this.getAngle();
-            System.out.println(Math.atan2(this.y, this.x));
+            double L = this.getLength();
             double angleRadian = Math.toRadians(angleDegrees);
             this.x = L * Math.cos(angleRadian);
             this.y = L * Math.sin(angleRadian);
@@ -149,7 +153,8 @@ public class Method {
             this.position.add(this.velocity.x * deltaTime, this.velocity.y * deltaTime);
         }
 
-        public void render(GraphicsContext gc){
+        public void render(GraphicsContext gc, Canvas canvas){
+            gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
             gc.save();
 
             gc.translate(this.position.x, this.position.y);
