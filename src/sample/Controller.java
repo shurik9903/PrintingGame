@@ -28,7 +28,7 @@ private AnchorPane APMenu;
 
     @FXML
     public void initialize() {
-        Sprite Meteor = new Sprite();
+        Method.Sprite Meteor = new Method.Sprite("");
 
 
     }

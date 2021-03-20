@@ -16,7 +16,7 @@ public class Method {
 
         public Vector(){
             this.set(0,0);
-        };
+        }
 
         public Vector(double x, double y){
             this.set(x,y);
@@ -100,5 +100,54 @@ public class Method {
 
     }
 
+    public static class Sprite {
+
+        public Vector position;
+        public Vector velocity;
+        public double rotation;
+        public Rectangle boundary;
+        public Image image;
+
+        public Sprite(){
+            this.position = new Vector();
+            this.velocity = new Vector();
+            this.rotation = 0;
+            this.boundary = new Rectangle();
+        }
+
+        public Sprite(String fileImageName){
+            this();
+            setImage(fileImageName);
+        }
+
+        public void setImage(String fileImageName){
+            this.image = new Image(fileImageName);
+        }
+
+        public Rectangle getBoundary(){
+            this.boundary.setPosition(this.position.x, this.position.y);
+            return this.boundary;
+        }
+
+        public boolean overlaps(Sprite other){
+            return this.getBoundary().overlaps(other.getBoundary());
+        }
+
+        public void update(double deltaTime){
+            this.position.add(this.velocity.x * deltaTime, this.velocity.y * deltaTime);
+        }
+
+        public void render(GraphicsContext gc){
+            gc.save();
+
+            gc.translate(this.position.x, this.position.y);
+            gc.rotate(this.rotation);
+            gc.translate(-this.image.getWidth()/2,-this.image.getHeight()/2);
+            gc.drawImage(this.image,0,0);
+
+            gc.restore();
+        }
+
+    }
 
 }
