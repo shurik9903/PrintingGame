@@ -5,10 +5,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="APMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
-      <ImageView fitHeight="150.0" fitWidth="150.0" layoutX="325.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="325.0" AnchorPane.rightAnchor="325.0" AnchorPane.topAnchor="50.0" />
-      <ImageView fitHeight="250.0" fitWidth="800.0" layoutY="345.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="600.0" fitWidth="800.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <ImageView fitHeight="130.0" fitWidth="798.0" layoutX="-2.0" layoutY="345.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="345.0">
+         <image>
+            <Image url="@../Image/Screenshot_1.png" />
+         </image></ImageView>
       <AnchorPane layoutY="470.0" prefHeight="130.0" prefWidth="800.0" style="-fx-background-color: Yellow;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="470.0">
          <children>
             <ImageView fitHeight="130.0" fitWidth="130.0" layoutX="335.0" pickOnBounds="true">
@@ -151,6 +154,9 @@
                </children>
             </AnchorPane>
          </children></AnchorPane>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="109.0" layoutY="320.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="109.0" layoutY="320.0" pickOnBounds="true" rotate="180.0">
+         <image>
+            <Image url="@../Image/8ogch83.png" />
+         </image></ImageView>
    </children>
 </AnchorPane>
