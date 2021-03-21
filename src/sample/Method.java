@@ -1,17 +1,13 @@
 package sample;
 
 
-import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import java.util.Random;
 
 public class Method {
-
+    //Класс вектор: Расположение, направление, скорость движения
     public static class Vector{
 
         public double x,y;
@@ -43,6 +39,10 @@ public class Method {
             return Math.sqrt(this.x * this.x + this.y * this.y);
         }
 
+        public double getLength(double x, double y){
+            return Math.sqrt(x * x + y * y);
+        }
+
         public void setLength(double L){
             double currentLength = this.getLength();
             if (currentLength == 0){
@@ -69,8 +69,20 @@ public class Method {
             this.y = L * Math.sin(angleRadian);
         }
 
+        public  double getAngle2Vectors(double x1, double y1, double x2, double y2){
+
+
+            double ma = getLength(this.x - x1, this.y - y1);
+            double mb = getLength(this.x - x2, this.y - y2);
+            double sc = x1 * x2 + y1 * y2;
+            return  Math.toDegrees(Math.acos(sc / ma / mb));
+        }
+
+
     }
 
+
+    //Класс прямоугольник: Служит коллизией(точка соприкосновения) объектов
     public static class Rectangle{
         double x, y;
         double width, height;
@@ -107,6 +119,7 @@ public class Method {
 
     }
 
+    //Класс обекта: Содержит описание объекта
     public static class Sprite {
 
         public Vector position;
@@ -114,12 +127,14 @@ public class Method {
         public double rotation;
         public Rectangle boundary;
         public Image image;
+        public double liveTime;
 
         public Sprite(){
             this.position = new Vector();
             this.velocity = new Vector();
             this.rotation = 0;
             this.boundary = new Rectangle();
+            this.liveTime = 0;
         }
 
         public Sprite(String fileImageName, double sizeImage){
@@ -145,16 +160,20 @@ public class Method {
             return this.boundary;
         }
 
+        //Расчет соприкосновение с другим объектом
         public boolean overlaps(Sprite other){
             return this.getBoundary().overlaps(other.getBoundary());
         }
 
+        //Обновление объекта
         public void update(double deltaTime){
+            this.liveTime += deltaTime;
             this.position.add(this.velocity.x * deltaTime, this.velocity.y * deltaTime);
         }
 
+        //Отрисовка обекта на экране
         public void render(GraphicsContext gc, Canvas canvas){
-            gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
+
             gc.save();
 
             gc.translate(this.position.x, this.position.y);
@@ -167,5 +186,30 @@ public class Method {
 
     }
 
+    //Класс настройки игры: Содержит описание запущенной игры
+    public static class GameOptions{
+        public int Difficulty;
+        public int MeteorsCount;
+        public double gameTime;
 
+        GameOptions(){
+            this.Difficulty = 0;
+            this.MeteorsCount = 0;
+            this.gameTime = 0;
+        }
+
+        GameOptions(int Difficulty, int MeteorsCount){
+            this.Difficulty = Difficulty;
+            this.MeteorsCount = MeteorsCount * Difficulty;
+            this.gameTime = 0;
+        }
+
+
+
+    }
+
+    //Функция получение случайных чисел в диапазоне
+    public double getRandomNumber(int min , int max){
+        return  min + new Random().nextInt(max - min + 1);
+    }
 }
