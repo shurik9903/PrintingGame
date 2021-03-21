@@ -27,27 +27,28 @@ private Canvas cBasic;
 
         GraphicsContext gcBasic = cBasic.getGraphicsContext2D();
 
-        Method.GameOptions Game = new Method.GameOptions(1, 20);
+        Method.GameOptions Game = new Method.GameOptions(1, 30);
 
         //Создание списка метеоритов
         ArrayList<Method.Sprite> MeteorList = new ArrayList<Method.Sprite>();
         for (int i = 0; i < Game.MeteorsCount; i++){
             Method.Sprite Meteor = new Method.Sprite("Image/Asteroid.png", new Method().getRandomNumber(50,150));
-            Meteor.position.set(new Method().getRandomNumber(-100, 700), -10);
+            Meteor.position.set(new Method().getRandomNumber(0, (int)cBasic.getWidth()), -100);
             Meteor.velocity.setLength(100);
+
 
             if (Meteor.position.x <= cBasic.getWidth()/2) {
 
-                Meteor.rotation = new Method().getRandomNumber(
-                        (int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
+                Meteor.rotation = 90 - new Method().getRandomNumber(
+                        -(int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
                                 0, cBasic.getHeight()),
-                        (int)Meteor.position.getAngle2Vectors(0, cBasic.getHeight(),
+                        (int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
                                 cBasic.getWidth(), cBasic.getHeight()));
             } else {
-                Meteor.rotation = new Method().getRandomNumber(
-                        90 + (int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
+                Meteor.rotation = 90 + new Method().getRandomNumber(
+                        -(int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
                                 cBasic.getWidth(), cBasic.getHeight()),
-                        180 - (int)Meteor.position.getAngle2Vectors(cBasic.getWidth(), cBasic.getHeight(),
+                        (int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
                                0, cBasic.getHeight()));
             }
             Meteor.velocity.setAngle(Meteor.rotation);
@@ -56,7 +57,7 @@ private Canvas cBasic;
 
 
         //ArrayList<Method.Sprite> Bullet = new ArrayList<Method.Sprite>();
-        
+
 
         AnimationTimer gameLoop = new AnimationTimer(){
             @Override

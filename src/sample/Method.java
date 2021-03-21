@@ -70,12 +70,16 @@ public class Method {
         }
 
         public  double getAngle2Vectors(double x1, double y1, double x2, double y2){
-
-
-            double ma = getLength(this.x - x1, this.y - y1);
-            double mb = getLength(this.x - x2, this.y - y2);
-            double sc = x1 * x2 + y1 * y2;
-            return  Math.toDegrees(Math.acos(sc / ma / mb));
+            x1 -= this.x;
+            y1 -= this.y;
+            x2 -= this.x;
+            y2 -= this.y;
+            System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
+            double ma = getLength(x1,y1);
+            double mb = getLength(x2,y2);
+            double sc = (x1 * x2) + (y1 * y2);
+            System.out.println("Radius " + Math.toDegrees(Math.acos(sc / (ma * mb))));
+            return  Math.toDegrees(Math.acos(sc / (ma * mb)));
         }
 
 
@@ -210,6 +214,11 @@ public class Method {
 
     //Функция получение случайных чисел в диапазоне
     public double getRandomNumber(int min , int max){
-        return  min + new Random().nextInt(max - min + 1);
+        System.out.println("min " + min + " max " + max);
+        double res;
+        if (min > max) res =  max + new Random().nextInt(min - max + 1);
+        else res =  min + new Random().nextInt(max - min + 1);
+        System.out.println("Res " + res);
+        return res;
     }
 }
