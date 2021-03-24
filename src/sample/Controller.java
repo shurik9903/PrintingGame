@@ -31,29 +31,9 @@ private Canvas cBasic;
 
         //Создание списка метеоритов
         ArrayList<Method.Sprite> MeteorList = new ArrayList<Method.Sprite>();
-        for (int i = 0; i < Game.MeteorsCount; i++){
-            Method.Sprite Meteor = new Method.Sprite("Image/Asteroid.png", new Method().getRandomNumber(50,150));
-            Meteor.position.set(new Method().getRandomNumber(0, (int)cBasic.getWidth()), -100);
-            Meteor.velocity.setLength(100);
-
-
-            if (Meteor.position.x <= cBasic.getWidth()/2) {
-
-                Meteor.rotation = 90 - new Method().getRandomNumber(
-                        -(int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
-                                0, cBasic.getHeight()),
-                        (int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
-                                cBasic.getWidth(), cBasic.getHeight()));
-            } else {
-                Meteor.rotation = 90 + new Method().getRandomNumber(
-                        -(int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
-                                cBasic.getWidth(), cBasic.getHeight()),
-                        (int)Meteor.position.getAngle2Vectors(Meteor.position.x, cBasic.getHeight(),
-                               0, cBasic.getHeight()));
-            }
-            Meteor.velocity.setAngle(Meteor.rotation);
-            MeteorList.add(Meteor);
-        }
+        for (int i = 0; i < Game.MeteorsCount; i++)
+            MeteorList.add(new Method.Meteor("Image/Asteroid.png", cBasic.getHeight(), cBasic.getWidth()));
+        
 
 
         //ArrayList<Method.Sprite> Bullet = new ArrayList<Method.Sprite>();

@@ -7,6 +7,17 @@ import javafx.scene.image.Image;
 import java.util.Random;
 
 public class Method {
+	
+	//Функция получение случайных чисел в диапазоне
+    public double getRandomNumber(int min , int max){
+        System.out.println("min " + min + " max " + max);
+        double res;
+        if (min > max) res =  max + new Random().nextInt(min - max + 1);
+        else res =  min + new Random().nextInt(max - min + 1);
+        System.out.println("Res " + res);
+        return res;
+    }
+	
     //Класс вектор: Расположение, направление, скорость движения
     public static class Vector{
 
@@ -189,6 +200,45 @@ public class Method {
         }
 
     }
+	
+	public static class Meteor extends Sprite{
+		
+		double BoxHeight, BoxWidth;
+		
+		public Meteor(){
+			super();
+			BoxHeight = 0;
+			BoxWidth = 0;
+		}
+		
+		public Meteor(String fileImageName,double BoxHeight, double BoxWidth ){
+			super(fileImageName, new Method().getRandomNumber(50,150));
+			this.BoxHeight = BoxHeight;
+			this.BoxWidth = BoxWidth;
+			position.set(new Method().getRandomNumber(0, (int)BoxWidth), -100);
+			velocity.setLength(100);
+			rotation = setHade();
+			velocity.setAngle(rotation);
+			
+		}
+		
+		public double setHade(){
+			if (this.position.x <= BoxWidth/2) {
+                return 90 - new Method().getRandomNumber(
+                        -(int)position.getAngle2Vectors(position.x, BoxHeight,
+                                0, BoxHeight),
+                        (int)position.getAngle2Vectors(position.x, BoxHeight,
+                                BoxWidth, BoxHeight));
+            } else {
+                return 90 + new Method().getRandomNumber(
+                        -(int)position.getAngle2Vectors(position.x,BoxHeight,
+                                BoxWidth, BoxHeight),
+                        (int)position.getAngle2Vectors(position.x, BoxHeight,
+                               0, BoxHeight));
+            }
+		}
+		
+	}
 
     //Класс настройки игры: Содержит описание запущенной игры
     public static class GameOptions{
@@ -207,18 +257,6 @@ public class Method {
             this.MeteorsCount = MeteorsCount * Difficulty;
             this.gameTime = 0;
         }
-
-
-
     }
-
-    //Функция получение случайных чисел в диапазоне
-    public double getRandomNumber(int min , int max){
-        System.out.println("min " + min + " max " + max);
-        double res;
-        if (min > max) res =  max + new Random().nextInt(min - max + 1);
-        else res =  min + new Random().nextInt(max - min + 1);
-        System.out.println("Res " + res);
-        return res;
-    }
+  
 }
