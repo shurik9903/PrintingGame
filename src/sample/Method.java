@@ -10,12 +10,8 @@ public class Method {
 	
 	//Функция получение случайных чисел в диапазоне
     public double getRandomNumber(int min , int max){
-        System.out.println("min " + min + " max " + max);
-        double res;
-        if (min > max) res =  max + new Random().nextInt(min - max + 1);
-        else res =  min + new Random().nextInt(max - min + 1);
-        System.out.println("Res " + res);
-        return res;
+        if (min > max) return  max + new Random().nextInt(min - max + 1);
+        else return  min + new Random().nextInt(max - min + 1);
     }
 	
     //Класс вектор: Расположение, направление, скорость движения
@@ -54,6 +50,7 @@ public class Method {
             return Math.sqrt(x * x + y * y);
         }
 
+        //Скорость объекта
         public void setLength(double L){
             double currentLength = this.getLength();
             if (currentLength == 0){
@@ -73,6 +70,7 @@ public class Method {
                 return Math.toDegrees( Math.atan2(this.y, this.x) );
         }
 
+        //Расчет угла движения объекта
         public void setAngle(double angleDegrees){
             double L = this.getLength();
             double angleRadian = Math.toRadians(angleDegrees);
@@ -85,11 +83,9 @@ public class Method {
             y1 -= this.y;
             x2 -= this.x;
             y2 -= this.y;
-            System.out.println(x1 +" "+ y1 +" "+ x2 +" "+ y2);
             double ma = getLength(x1,y1);
             double mb = getLength(x2,y2);
             double sc = (x1 * x2) + (y1 * y2);
-            System.out.println("Radius " + Math.toDegrees(Math.acos(sc / (ma * mb))));
             return  Math.toDegrees(Math.acos(sc / (ma * mb)));
         }
 
@@ -215,26 +211,45 @@ public class Method {
 			super(fileImageName, new Method().getRandomNumber(50,150));
 			this.BoxHeight = BoxHeight;
 			this.BoxWidth = BoxWidth;
-			position.set(new Method().getRandomNumber(0, (int)BoxWidth), -100);
-			velocity.setLength(100);
-			rotation = setHade();
+			position.set(new Method().getRandomNumber(-200, (int)BoxWidth+200), -100);
+			velocity.setLength(50);
+			rotation = setFall();
 			velocity.setAngle(rotation);
 			
 		}
-		
-		public double setHade(){
+
+		//Угол падения между случайным минимальным и максимальным углом
+		public double setFall(){
+		    //Если метеорит появится в левой половине окна
 			if (this.position.x <= BoxWidth/2) {
-                return 90 - new Method().getRandomNumber(
-                        -(int)position.getAngle2Vectors(position.x, BoxHeight,
-                                0, BoxHeight),
-                        (int)position.getAngle2Vectors(position.x, BoxHeight,
-                                BoxWidth, BoxHeight));
+			    //Если метеорит появится близко к границе или за границей окна
+			    if (this.position.x < BoxWidth*0.2){
+                    return 90 - new Method().getRandomNumber(
+                            (int)position.getAngle2Vectors(position.x, BoxHeight,
+                                    BoxWidth/2, BoxHeight),
+                            (int)position.getAngle2Vectors(position.x, BoxHeight,
+                                    BoxWidth, BoxHeight));
+                }else{
+                    return 90 - new Method().getRandomNumber(
+                            -(int)position.getAngle2Vectors(position.x, BoxHeight,
+                                    0, BoxHeight),
+                            (int)position.getAngle2Vectors(position.x, BoxHeight,
+                                    BoxWidth, BoxHeight));
+                }
             } else {
-                return 90 + new Method().getRandomNumber(
-                        -(int)position.getAngle2Vectors(position.x,BoxHeight,
-                                BoxWidth, BoxHeight),
-                        (int)position.getAngle2Vectors(position.x, BoxHeight,
-                               0, BoxHeight));
+                if (this.position.x > BoxWidth - BoxWidth*0.2){
+                    return 90 + new Method().getRandomNumber(
+                            (int)position.getAngle2Vectors(position.x,BoxHeight,
+                                    BoxWidth/2, BoxHeight),
+                            (int)position.getAngle2Vectors(position.x, BoxHeight,
+                                    0, BoxHeight));
+                }else{
+                    return 90 + new Method().getRandomNumber(
+                            -(int)position.getAngle2Vectors(position.x,BoxHeight,
+                                    BoxWidth, BoxHeight),
+                            (int)position.getAngle2Vectors(position.x, BoxHeight,
+                                    0, BoxHeight));
+                }
             }
 		}
 		
