@@ -4,6 +4,10 @@ package sample;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Method {
@@ -183,7 +187,7 @@ public class Method {
         }
 
         //Отрисовка обекта на экране
-        public void render(GraphicsContext gc, Canvas canvas){
+        public void render(GraphicsContext gc){
 
             gc.save();
 
@@ -200,13 +204,8 @@ public class Method {
 	public static class Meteor extends Sprite{
 		
 		double BoxHeight, BoxWidth;
-		
-		public Meteor(){
-			super();
-			BoxHeight = 0;
-			BoxWidth = 0;
-		}
-		
+		public TextToObject Text;
+
 		public Meteor(String fileImageName,double BoxHeight, double BoxWidth ){
 			super(fileImageName, new Method().getRandomNumber(50,150));
 			this.BoxHeight = BoxHeight;
@@ -215,7 +214,7 @@ public class Method {
 			velocity.setLength(50);
 			rotation = setFall();
 			velocity.setAngle(rotation);
-			
+			Text = new TextToObject(this.position.x, this.position.y + this.image.getHeight()/2, 25,25, "qwe");
 		}
 
 		//Угол падения между случайным минимальным и максимальным углом
@@ -252,7 +251,19 @@ public class Method {
                 }
             }
 		}
-		
+
+		@Override
+        public void update(double deltaTime){
+            super.update(deltaTime);
+            this.Text.setCoordinate(this.position.x, this.position.y + this.image.getHeight()/2);
+        }
+
+		@Override
+        public void render(GraphicsContext gc){
+            super.render(gc);
+            this.Text.render(gc);
+        }
+
 	}
 
     //Класс настройки игры: Содержит описание запущенной игры
@@ -261,17 +272,72 @@ public class Method {
         public int MeteorsCount;
         public double gameTime;
 
-        GameOptions(){
-            this.Difficulty = 0;
-            this.MeteorsCount = 0;
-            this.gameTime = 0;
-        }
-
         GameOptions(int Difficulty, int MeteorsCount){
             this.Difficulty = Difficulty;
             this.MeteorsCount = MeteorsCount * Difficulty;
             this.gameTime = 0;
         }
+    }
+
+    public static class TextToObject{
+        public double x,y;
+        public double Width, Height;
+        public int CountWord;
+        public String Text;
+        public Map<Character,Image> TextImage;
+        public ArrayList<Image> FrameImage;
+        public Image FStart, FEnd, FMiddle;
+
+        public TextToObject(double x, double y, double Width, double Height, String Text){
+            this.Text = Text;
+            this.CountWord = Text.length();
+            this.Width = Width;
+            this.Height = Height;
+            InitializationImage();
+            setCoordinate(x, y);
+        }
+
+        public void setCoordinate(double x, double y){
+            this.x = x - (((2 + this.CountWord) * this.Width) / 2);
+            this.y = y + 10;
+        }
+
+        public void InitializationImage(){
+            this.FStart = new Image("Image/R1.png", this.Width,this.Height,false,false);
+            this.FEnd = new Image("Image/R3.png", this.Width,this.Height,false,false);
+            this.FMiddle = new Image("Image/R2.png", this.Width,this.Height,false,false);
+
+            this.FrameImage = new ArrayList<Image>();
+            this.FrameImage.add(FStart);
+            for (int i = 0; i < this.CountWord; i++){
+                this.FrameImage.add(FMiddle);
+            }
+            this.FrameImage.add(FEnd);
+
+            this.TextImage = new HashMap<Character,Image>();
+            /*
+            for(char i = 'а';i<='я';i++)
+            {
+                this.TextImage.put(i,new Image(i+"unbroken.png", Width,Height,false,false));
+                this.TextImage.put(i,new Image(i+"broken.png", Width,Height,false,false));
+            }
+             */
+
+        }
+
+        public void render(GraphicsContext gc){
+            gc.save();
+
+            gc.translate(this.x, this.y);
+
+            for (Image i : this.FrameImage) {
+                gc.translate(+ this.Width,0);
+                gc.drawImage(i, 0, 0);
+            }
+
+            gc.restore();
+        }
+
     }
   
 }
