@@ -1,23 +1,34 @@
 package sample;
 
-
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+
 
 public class Method {
-	
+
 	//Функция получение случайных чисел в диапазоне
-    public double getRandomNumber(int min , int max){
+    public int getRandomNumber(int min , int max){
         if (min > max) return  max + new Random().nextInt(min - max + 1);
         else return  min + new Random().nextInt(max - min + 1);
     }
-	
+
+    public String getRandomWord(){
+
+            Scanner sc = new Scanner(new File("C:\\Users\\User\\IdeaProjects\\ProjectUniverse\\src\\Text.txt"));
+
+
+        return "";
+
+    }
+
     //Класс вектор: Расположение, направление, скорость движения
     public static class Vector{
 
@@ -213,8 +224,10 @@ public class Method {
 			position.set(new Method().getRandomNumber(-200, (int)BoxWidth+200), -100);
 			velocity.setLength(50);
 			rotation = setFall();
-			velocity.setAngle(rotation);
-			Text = new TextToObject(this.position.x, this.position.y + this.image.getHeight()/2, 25,25, "qwe");
+            System.out.println(new Method().getRandomWord());
+            velocity.setAngle(rotation);
+			Text = new TextToObject(this.position.x, this.position.y + this.image.getHeight()/2,
+                    25,25, "йцу");
 		}
 
 		//Угол падения между случайным минимальным и максимальным углом
@@ -284,16 +297,14 @@ public class Method {
         public double Width, Height;
         public int CountWord;
         public String Text;
-        public Map<Character,Image> TextImage;
-        public ArrayList<Image> FrameImage;
-        public Image FStart, FEnd, FMiddle;
+        public ArrayList<Image> FrameImage, FrameText;
 
         public TextToObject(double x, double y, double Width, double Height, String Text){
             this.Text = Text;
             this.CountWord = Text.length();
             this.Width = Width;
             this.Height = Height;
-            InitializationImage();
+            CreateFrame();
             setCoordinate(x, y);
         }
 
@@ -302,42 +313,49 @@ public class Method {
             this.y = y + 10;
         }
 
-        public void InitializationImage(){
-            this.FStart = new Image("Image/R1.png", this.Width,this.Height,false,false);
-            this.FEnd = new Image("Image/R3.png", this.Width,this.Height,false,false);
-            this.FMiddle = new Image("Image/R2.png", this.Width,this.Height,false,false);
+        public void CreateFrame(){
+            Image FStart = new Image("Image/R1.png", this.Width,this.Height,false,false);
+            Image FEnd = new Image("Image/R3.png", this.Width,this.Height,false,false);
+            Image FMiddle = new Image("Image/R2.png", this.Width,this.Height,false,false);
 
-            this.FrameImage = new ArrayList<Image>();
+            this.FrameImage = new ArrayList<>();
             this.FrameImage.add(FStart);
             for (int i = 0; i < this.CountWord; i++){
                 this.FrameImage.add(FMiddle);
             }
             this.FrameImage.add(FEnd);
 
-            this.TextImage = new HashMap<Character,Image>();
-            /*
-            for(char i = 'а';i<='я';i++)
-            {
-                this.TextImage.put(i,new Image(i+"unbroken.png", Width,Height,false,false));
-                this.TextImage.put(i,new Image(i+"broken.png", Width,Height,false,false));
+
+            this.FrameText = new ArrayList<>();
+            for (char i : this.Text.toCharArray()){
+                this.FrameText.add(new Image("Image/TextImage/"+i+"unbroken.png",
+                        this.Width,this.Height,false,false));
             }
-             */
+
+
 
         }
 
         public void render(GraphicsContext gc){
             gc.save();
 
+            int Count = 0;
             gc.translate(this.x, this.y);
 
             for (Image i : this.FrameImage) {
                 gc.translate(+ this.Width,0);
+
                 gc.drawImage(i, 0, 0);
+                if (Count <= this.CountWord && Count > 0)
+                    gc.drawImage(this.FrameText.get(Count-1), 0, 0);
+                Count++;
             }
+
+
 
             gc.restore();
         }
 
     }
-  
+
 }

@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class Controller {
@@ -15,12 +16,14 @@ private Canvas cBasic;
 
 
     @FXML
-    public void initialize() {
+    public void initialize(){
         //Частота отрисовки
+
         double deltaTime = 1./60;
 
         GraphicsContext gcBasic = cBasic.getGraphicsContext2D();
 
+        //Описание настроек игры
         Method.GameOptions Game = new Method.GameOptions(1, 10);
 
         //Создание списка метеоритов
