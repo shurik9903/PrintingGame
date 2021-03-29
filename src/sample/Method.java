@@ -3,13 +3,12 @@ package sample;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 
 public class Method {
@@ -22,8 +21,12 @@ public class Method {
 
     public String getRandomWord(){
 
-            Scanner sc = new Scanner(new File("C:\\Users\\User\\IdeaProjects\\ProjectUniverse\\src\\Text.txt"));
-
+        try (Stream<String> lines = Files.lines(Paths.get("./src/sample/Text.txt"), StandardCharsets.UTF_8)) {
+            String text = lines.skip(getRandomNumber(0,10392)).findFirst().get();
+            return text;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return "";
 
@@ -106,7 +109,6 @@ public class Method {
 
 
     }
-
 
     //Класс прямоугольник: Служит коллизией(точка соприкосновения) объектов
     public static class Rectangle{
@@ -222,12 +224,11 @@ public class Method {
 			this.BoxHeight = BoxHeight;
 			this.BoxWidth = BoxWidth;
 			position.set(new Method().getRandomNumber(-200, (int)BoxWidth+200), -100);
-			velocity.setLength(50);
+			velocity.setLength(10);
 			rotation = setFall();
-            System.out.println(new Method().getRandomWord());
             velocity.setAngle(rotation);
 			Text = new TextToObject(this.position.x, this.position.y + this.image.getHeight()/2,
-                    25,25, "йцу");
+                    25,25, new Method().getRandomWord());
 		}
 
 		//Угол падения между случайным минимальным и максимальным углом
@@ -325,14 +326,11 @@ public class Method {
             }
             this.FrameImage.add(FEnd);
 
-
             this.FrameText = new ArrayList<>();
             for (char i : this.Text.toCharArray()){
                 this.FrameText.add(new Image("Image/TextImage/"+i+"unbroken.png",
                         this.Width,this.Height,false,false));
             }
-
-
 
         }
 
@@ -351,11 +349,34 @@ public class Method {
                 Count++;
             }
 
-
-
             gc.restore();
         }
 
     }
 
+
+    public static class Aim extends Sprite{
+
+        double BoxHeight, BoxWidth;
+
+        public Aim(double BoxHeight, double BoxWidth){
+            super("Image/Aim.png", 100);
+            this.BoxWidth = BoxWidth;
+            this.BoxHeight = BoxHeight;
+            position.set(this.BoxWidth/2, this.BoxHeight/2);
+            velocity.setLength(0);
+        }
+
+        @Override
+        public void update(double deltaTime){
+            super.update(deltaTime);
+        }
+
+        @Override
+        public void render(GraphicsContext gc){
+            super.render(gc);
+
+        }
+
+    }
 }
