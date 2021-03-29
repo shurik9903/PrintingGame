@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -80,8 +81,7 @@ public class Method {
             }
         }
 
-        public double getAngle()
-        {
+        public double getAngle(){
             if (this.getLength() == 0)
                 return 0;
             else
@@ -227,6 +227,7 @@ public class Method {
 			velocity.setLength(10);
 			rotation = setFall();
             velocity.setAngle(rotation);
+            boundary.setSize(10,10);
 			Text = new TextToObject(this.position.x, this.position.y + this.image.getHeight()/2,
                     25,25, new Method().getRandomWord());
 		}
@@ -358,18 +359,71 @@ public class Method {
     public static class Aim extends Sprite{
 
         double BoxHeight, BoxWidth;
+        Sprite TargetMeteor;
+        int NumberToMeteor;
+        boolean TargetCaught;
 
         public Aim(double BoxHeight, double BoxWidth){
             super("Image/Aim.png", 100);
             this.BoxWidth = BoxWidth;
             this.BoxHeight = BoxHeight;
+            this.boundary.setSize(10,10);
+            TargetMeteor = null;
+            NumberToMeteor = -1;
+            TargetCaught = false;
             position.set(this.BoxWidth/2, this.BoxHeight/2);
             velocity.setLength(0);
+        }
+
+        public void AimToMeteor(ArrayList<Sprite> meteor, boolean LR){
+
+            TargetCaught = false;
+
+            if (meteor.size() == 0) {
+                TargetMeteor = null;
+                velocity.setLength(0);
+                return;
+            }
+
+            if (LR) {
+                NumberToMeteor++;
+                while (meteor.size() <= NumberToMeteor)
+                    NumberToMeteor -= meteor.size();
+            } else {
+                NumberToMeteor--;
+                while (NumberToMeteor < 0)
+                    NumberToMeteor = meteor.size()-1;
+            }
+
+            velocity.setLength(300);
+            TargetMeteor = meteor.get(NumberToMeteor);
+        }
+
+        public void MoveToTarget(){
+          if (this.overlaps(TargetMeteor))
+                TargetCaught = true;
+
+            if (TargetCaught){
+                this.position.y = TargetMeteor.position.y;
+                this.position.x = TargetMeteor.position.x;
+                velocity.setLength(0);
+                return;
+            }
+
+            Point2D vector =
+                    new Point2D(TargetMeteor.position.x - position.x, TargetMeteor.position.y - position.y);
+            double angle = vector.angle(1, 0);
+            if (vector.getY() > 0)
+                velocity.setAngle(angle);
+            else
+                velocity.setAngle(-angle);
         }
 
         @Override
         public void update(double deltaTime){
             super.update(deltaTime);
+            if (TargetMeteor != null)
+                MoveToTarget();
         }
 
         @Override

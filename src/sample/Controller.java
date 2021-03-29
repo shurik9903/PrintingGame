@@ -27,7 +27,6 @@ public void initialize(){
         AtomicBoolean KeyHold = new AtomicBoolean(false);
         GraphicsContext gcBasic = cBasic.getGraphicsContext2D();
 
-
         //Прицел игрока
         Method.Aim aim = new Method.Aim(cBasic.getHeight(), cBasic.getWidth());
 
@@ -64,7 +63,15 @@ public void initialize(){
             @Override
             public void handle(long nanotime){
 
+                if (KeyList.contains("ALT_GRAPH")){
+                    aim.AimToMeteor(MeteorList, true);
+                    KeyList.remove("ALT_GRAPH");
+                }
 
+                if (KeyList.contains("ALT")){
+                    aim.AimToMeteor(MeteorList, false);
+                    KeyList.remove("ALT");
+                }
 
                 gcBasic.clearRect(0,0, cBasic.getWidth(), cBasic.getHeight());
                 for (Method.Sprite Meteor : MeteorList)
