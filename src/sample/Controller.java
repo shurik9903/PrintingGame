@@ -19,27 +19,34 @@ private Canvas cBasic;
 @FXML
 private AnchorPane APMenu;
 
+//Инициализация при запуске формы
 @FXML
 public void initialize(){
-        //Частота отрисовки
 
+        //Частота отрисовки
         double deltaTime = 1./60;
+
+        //Проверка на зажатие кнопки
         AtomicBoolean KeyHold = new AtomicBoolean(false);
+
+        //Графический контекст для отрисовки объектов
         GraphicsContext gcBasic = cBasic.getGraphicsContext2D();
 
         //Прицел игрока
-        Method.Aim aim = new Method.Aim(cBasic.getHeight(), cBasic.getWidth());
+        Model.Aim aim = new Model.Aim(cBasic.getHeight(), cBasic.getWidth());
 
         //Описание настроек игры
-        Method.GameOptions Game = new Method.GameOptions(1, 10);
+        Model.GameOptions Game = new Model.GameOptions(1, 10);
 
         //Создание списка метеоритов
-        ArrayList<Method.Sprite> MeteorList = new ArrayList<Method.Sprite>();
+        ArrayList<Model.Sprite> MeteorList = new ArrayList<Model.Sprite>();
         for (int i = 0; i < Game.MeteorsCount; i++)
-            MeteorList.add(new Method.Meteor("Image/Asteroid.png", cBasic.getHeight(), cBasic.getWidth()));
+            MeteorList.add(new Model.Meteor("Image/Asteroid.png", cBasic.getHeight(), cBasic.getWidth()));
 
+        //Список нажатых клавишь
         ArrayList<String> KeyList = new ArrayList<String>();
 
+        //Добавление действий на форму | Действие при нажатие клавиши
         APMenu.setOnKeyPressed(
                 (KeyEvent e) ->{
                     if (!KeyHold.get()) {
@@ -50,6 +57,7 @@ public void initialize(){
                 }
         );
 
+        //Добавление действий на форму | Действие при отпускание клавиши
         APMenu.setOnKeyReleased(
                 (KeyEvent e) ->{
                     KeyHold.set(false);
@@ -58,30 +66,38 @@ public void initialize(){
 
         //ArrayList<Method.Sprite> Bullet = new ArrayList<Method.Sprite>();
 
-
+        //Поток анимации объектов
         AnimationTimer gameLoop = new AnimationTimer(){
             @Override
             public void handle(long nanotime){
 
+                //Действие при нажатии правого альта
                 if (KeyList.contains("ALT_GRAPH")){
                     aim.AimToMeteor(MeteorList, true);
                     KeyList.remove("ALT_GRAPH");
                 }
 
+                //Действие при нажатии левого альта
                 if (KeyList.contains("ALT")){
                     aim.AimToMeteor(MeteorList, false);
                     KeyList.remove("ALT");
                 }
 
+                //Очитска формы
                 gcBasic.clearRect(0,0, cBasic.getWidth(), cBasic.getHeight());
-                for (Method.Sprite Meteor : MeteorList)
+
+                //Обновление списка метеоритов
+                for (Model.Sprite Meteor : MeteorList)
                     Meteor.update(deltaTime);
 
+                //Обновление прицела
                 aim.update(deltaTime);
 
-                for (Method.Sprite Meteor : MeteorList)
+                //Отрисовка списка метеоритов
+                for (Model.Sprite Meteor : MeteorList)
                     Meteor.render(gcBasic);
 
+                //Отрисовка прицела
                 aim.render(gcBasic);
 
             }

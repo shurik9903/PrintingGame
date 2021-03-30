@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 
-public class Method {
+public class Model {
 
 	//Функция получение случайных чисел в диапазоне
     public int getRandomNumber(int min , int max){
@@ -20,15 +20,14 @@ public class Method {
         else return  min + new Random().nextInt(max - min + 1);
     }
 
+    //Функция получения слачайного слово из файла словаря
     public String getRandomWord(){
-
         try (Stream<String> lines = Files.lines(Paths.get("./src/sample/Text.txt"), StandardCharsets.UTF_8)) {
             String text = lines.skip(getRandomNumber(0,10392)).findFirst().get();
             return text;
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return "";
 
     }
@@ -60,6 +59,7 @@ public class Method {
             this.x *= m;
             this.y *= m;
         }
+
 
         public double getLength(){
             return Math.sqrt(this.x * this.x + this.y * this.y);
@@ -96,6 +96,7 @@ public class Method {
             this.y = L * Math.sin(angleRadian);
         }
 
+        //Расчет угла между двумя векторами
         public  double getAngle2Vectors(double x1, double y1, double x2, double y2){
             x1 -= this.x;
             y1 -= this.y;
@@ -136,6 +137,7 @@ public class Method {
             this.height = height;
         }
 
+        //Проверка на пересечение с другим прямоугольником
         public boolean overlaps(Rectangle other){
             boolean noOverlaps = this.x + this.width < other.x ||
                     other.x + other.width < this.x ||
@@ -213,23 +215,24 @@ public class Method {
         }
 
     }
-	
+
+    //Класс Метеорит: Содержит описание метеоритов и их поведение
 	public static class Meteor extends Sprite{
 		
 		double BoxHeight, BoxWidth;
 		public TextToObject Text;
 
 		public Meteor(String fileImageName,double BoxHeight, double BoxWidth ){
-			super(fileImageName, new Method().getRandomNumber(50,150));
+			super(fileImageName, new Model().getRandomNumber(50,150));
 			this.BoxHeight = BoxHeight;
 			this.BoxWidth = BoxWidth;
-			position.set(new Method().getRandomNumber(-200, (int)BoxWidth+200), -100);
+			position.set(new Model().getRandomNumber(-200, (int)BoxWidth+200), -100);
 			velocity.setLength(10);
 			rotation = setFall();
             velocity.setAngle(rotation);
             boundary.setSize(10,10);
 			Text = new TextToObject(this.position.x, this.position.y + this.image.getHeight()/2,
-                    25,25, new Method().getRandomWord());
+                    25,25, new Model().getRandomWord());
 		}
 
 		//Угол падения между случайным минимальным и максимальным углом
@@ -238,13 +241,13 @@ public class Method {
 			if (this.position.x <= BoxWidth/2) {
 			    //Если метеорит появится близко к границе или за границей окна
 			    if (this.position.x < BoxWidth*0.2){
-                    return 90 - new Method().getRandomNumber(
+                    return 90 - new Model().getRandomNumber(
                             (int)position.getAngle2Vectors(position.x, BoxHeight,
                                     BoxWidth/2, BoxHeight),
                             (int)position.getAngle2Vectors(position.x, BoxHeight,
                                     BoxWidth, BoxHeight));
                 }else{
-                    return 90 - new Method().getRandomNumber(
+                    return 90 - new Model().getRandomNumber(
                             -(int)position.getAngle2Vectors(position.x, BoxHeight,
                                     0, BoxHeight),
                             (int)position.getAngle2Vectors(position.x, BoxHeight,
@@ -252,13 +255,13 @@ public class Method {
                 }
             } else {
                 if (this.position.x > BoxWidth - BoxWidth*0.2){
-                    return 90 + new Method().getRandomNumber(
+                    return 90 + new Model().getRandomNumber(
                             (int)position.getAngle2Vectors(position.x,BoxHeight,
                                     BoxWidth/2, BoxHeight),
                             (int)position.getAngle2Vectors(position.x, BoxHeight,
                                     0, BoxHeight));
                 }else{
-                    return 90 + new Method().getRandomNumber(
+                    return 90 + new Model().getRandomNumber(
                             -(int)position.getAngle2Vectors(position.x,BoxHeight,
                                     BoxWidth, BoxHeight),
                             (int)position.getAngle2Vectors(position.x, BoxHeight,
@@ -267,12 +270,14 @@ public class Method {
             }
 		}
 
+		//Обновление объекта
 		@Override
         public void update(double deltaTime){
             super.update(deltaTime);
             this.Text.setCoordinate(this.position.x, this.position.y + this.image.getHeight()/2);
         }
 
+        //отрисовка объекта
 		@Override
         public void render(GraphicsContext gc){
             super.render(gc);
@@ -294,6 +299,7 @@ public class Method {
         }
     }
 
+    //Класс форма с текстом: расположение, длина и текст формы
     public static class TextToObject{
         public double x,y;
         public double Width, Height;
@@ -310,11 +316,13 @@ public class Method {
             setCoordinate(x, y);
         }
 
+        //Установка координат формы
         public void setCoordinate(double x, double y){
             this.x = x - (((2 + this.CountWord) * this.Width) / 2);
             this.y = y + 10;
         }
 
+        //Описание формы и текста
         public void CreateFrame(){
             Image FStart = new Image("Image/R1.png", this.Width,this.Height,false,false);
             Image FEnd = new Image("Image/R3.png", this.Width,this.Height,false,false);
@@ -335,6 +343,7 @@ public class Method {
 
         }
 
+        //Отрисовка объекта
         public void render(GraphicsContext gc){
             gc.save();
 
@@ -355,7 +364,7 @@ public class Method {
 
     }
 
-
+    //Класс прицел: координаты, цель и описание пойманного в прицел объекта
     public static class Aim extends Sprite{
 
         double BoxHeight, BoxWidth;
@@ -375,6 +384,7 @@ public class Method {
             velocity.setLength(0);
         }
 
+        //Нацеливание на метеорит из спика
         public void AimToMeteor(ArrayList<Sprite> meteor, boolean LR){
 
             TargetCaught = false;
@@ -399,6 +409,7 @@ public class Method {
             TargetMeteor = meteor.get(NumberToMeteor);
         }
 
+        //Движение к нацеленному метеориту
         public void MoveToTarget(){
           if (this.overlaps(TargetMeteor))
                 TargetCaught = true;
@@ -419,6 +430,7 @@ public class Method {
                 velocity.setAngle(-angle);
         }
 
+        //Обновление объекта
         @Override
         public void update(double deltaTime){
             super.update(deltaTime);
@@ -426,6 +438,7 @@ public class Method {
                 MoveToTarget();
         }
 
+        //Отрисовка объекта
         @Override
         public void render(GraphicsContext gc){
             super.render(gc);

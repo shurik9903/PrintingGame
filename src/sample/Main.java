@@ -18,6 +18,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.setResizable(false);
         primaryStage.show();
+        //Фокусировка на объекта указанного в fxml для перехвата event-ов
         root.requestFocus();
     }
 
