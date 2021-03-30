@@ -14,11 +14,86 @@ import java.util.stream.Stream;
 
 public class Model {
 
+    static class MyImage extends Image{
+
+        private String ImageName;
+        private boolean Type;
+
+        public MyImage(String s, double v, double v1, boolean b, boolean b1, String ImageName, boolean Type) {
+            super(s, v, v1, b, b1);
+            this.ImageName = ImageName;
+            this.Type = Type;
+        }
+
+        public void setName(String ImageName){
+            this.ImageName = ImageName;
+        }
+
+        public void setType(boolean Type){
+            this.Type = Type;
+        }
+
+        public String getName(){
+            return this.ImageName;
+        }
+
+        public boolean getType(){
+            return this.Type;
+        }
+
+    }
+
 	//Функция получение случайных чисел в диапазоне
     public int getRandomNumber(int min , int max){
         if (min > max) return  max + new Random().nextInt(min - max + 1);
         else return  min + new Random().nextInt(max - min + 1);
     }
+
+    //Функиця перевода английских букв в русские
+    public String RusText(Character c){
+
+        c = Character.toLowerCase(c);
+        if (c == 'ё') c = 'е';
+
+        ArrayList<Character> rus = new ArrayList<>(
+                Arrays.asList('й','ц','у','к','е','н','г','ш','щ','з','х',
+                        'ъ','ф','ы','в','а','п','р','о','л','д','ж',
+                        'э','я','ч','с','м','и','т','ь','б','ю','е'));
+
+        ArrayList<Character> eng = new ArrayList<>(
+                Arrays.asList('q','w','e','r','t','y','u','i','o','p','[',
+                        ']','a','s','d','f','g','h','j','k','l',';',
+                        '\'','z','x','c','v','b','n','m',',','.','`'));
+
+        if (rus.contains(c)) return c.toString();
+        if (eng.contains(c)) return rus.get(eng.indexOf(c)).toString();
+        return "";
+    }
+
+    public int IndexRusEng(ArrayList<String> arr){
+
+        ArrayList<Character> rus = new ArrayList<>(
+                Arrays.asList('й','ц','у','к','е','н','г','ш','щ','з','х',
+                        'ъ','ф','ы','в','а','п','р','о','л','д','ж',
+                        'э','я','ч','с','м','и','т','ь','б','ю','е'));
+
+        ArrayList<Character> eng = new ArrayList<>(
+                Arrays.asList('q','w','e','r','t','y','u','i','o','p','[',
+                        ']','a','s','d','f','g','h','j','k','l',';',
+                        '\'','z','x','c','v','b','n','m',',','.','`'));
+
+        for (Character i: rus)
+            if (arr.contains(i.toString()))
+                return arr.indexOf(i.toString());
+
+        for (Character i: eng)
+            if (arr.contains(i.toString()))
+                return arr.indexOf(i.toString());
+
+        return -1;
+
+    }
+
 
     //Функция получения слачайного слово из файла словаря
     public String getRandomWord(){
@@ -305,7 +380,8 @@ public class Model {
         public double Width, Height;
         public int CountWord;
         public String Text;
-        public ArrayList<Image> FrameImage, FrameText;
+        public ArrayList<Image> FrameImage;
+        public ArrayList<ArrayList<MyImage>> FrameText;
 
         public TextToObject(double x, double y, double Width, double Height, String Text){
             this.Text = Text;
@@ -336,10 +412,29 @@ public class Model {
             this.FrameImage.add(FEnd);
 
             this.FrameText = new ArrayList<>();
-            for (char i : this.Text.toCharArray()){
-                this.FrameText.add(new Image("Image/TextImage/"+i+"unbroken.png",
-                        this.Width,this.Height,false,false));
+            for (Character i : this.Text.toCharArray()){
+                this.FrameText.add(new ArrayList<MyImage>());
+                FrameText.get(FrameText.size()-1).add(new MyImage("Image/TextImage/"+i+"unbroken.png",
+                        this.Width,this.Height,false,false, i.toString(),false));
+                FrameText.get(FrameText.size()-1).add(new MyImage("Image/TextImage/"+i+"broken.png",
+                        this.Width,this.Height,false,false, i.toString(),true));
+
+
+
             }
+
+        }
+
+
+        //Смена изображения с целой буквы на поломанную
+        public void ChangeImage(Character c){
+            for (ArrayList<MyImage> i : FrameText)
+                if (i.get(0).ImageName.equals(c.toString()) && !i.get(0).Type) {
+                    MyImage m = i.get(0);
+                    i.set(0,i.get(1));
+                    i.set(1,m);
+                    return;
+                }
 
         }
 
@@ -355,7 +450,7 @@ public class Model {
 
                 gc.drawImage(i, 0, 0);
                 if (Count <= this.CountWord && Count > 0)
-                    gc.drawImage(this.FrameText.get(Count-1), 0, 0);
+                    gc.drawImage(this.FrameText.get(Count-1).get(0), 0, 0);
                 Count++;
             }
 
@@ -368,7 +463,7 @@ public class Model {
     public static class Aim extends Sprite{
 
         double BoxHeight, BoxWidth;
-        Sprite TargetMeteor;
+        Meteor TargetMeteor;
         int NumberToMeteor;
         boolean TargetCaught;
 
@@ -385,7 +480,7 @@ public class Model {
         }
 
         //Нацеливание на метеорит из спика
-        public void AimToMeteor(ArrayList<Sprite> meteor, boolean LR){
+        public void AimToMeteor(ArrayList<Meteor> meteor, boolean LR){
 
             TargetCaught = false;
 
@@ -407,6 +502,12 @@ public class Model {
 
             velocity.setLength(300);
             TargetMeteor = meteor.get(NumberToMeteor);
+        }
+
+        //Огонь по метеориту
+        public void Fire(Character c){
+            if (TargetCaught)
+                TargetMeteor.Text.ChangeImage(c);
         }
 
         //Движение к нацеленному метеориту

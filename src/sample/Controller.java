@@ -7,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 
+
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,19 +40,25 @@ public void initialize(){
         Model.GameOptions Game = new Model.GameOptions(1, 10);
 
         //Создание списка метеоритов
-        ArrayList<Model.Sprite> MeteorList = new ArrayList<Model.Sprite>();
+        ArrayList<Model.Meteor> MeteorList = new ArrayList<>();
         for (int i = 0; i < Game.MeteorsCount; i++)
             MeteorList.add(new Model.Meteor("Image/Asteroid.png", cBasic.getHeight(), cBasic.getWidth()));
 
         //Список нажатых клавишь
-        ArrayList<String> KeyList = new ArrayList<String>();
+        ArrayList<String> KeyList = new ArrayList<>();
 
         //Добавление действий на форму | Действие при нажатие клавиши
         APMenu.setOnKeyPressed(
                 (KeyEvent e) ->{
                     if (!KeyHold.get()) {
-                        System.out.println(e.getCode().toString());
-                        KeyList.add(e.getCode().toString());
+                        if (e.getCode().toString().equals("CONTROL") || e.getCode().toString().equals("ALT_GRAPH"))
+                            KeyList.add("ALT_GRAPH");
+                        else if (e.getCode().toString().equals("ALT"))
+                            KeyList.add(e.getCode().toString());
+                        else if (e.getText().length() == 1)
+                            KeyList.add(new Model().RusText(e.getText().toCharArray()[0]));
+                        KeyList.remove("");
+                        System.out.println(KeyList);
                         KeyHold.set(true);
                     }
                 }
@@ -59,9 +66,7 @@ public void initialize(){
 
         //Добавление действий на форму | Действие при отпускание клавиши
         APMenu.setOnKeyReleased(
-                (KeyEvent e) ->{
-                    KeyHold.set(false);
-                }
+                (KeyEvent e) -> KeyHold.set(false)
         );
 
         //ArrayList<Method.Sprite> Bullet = new ArrayList<Method.Sprite>();
@@ -81,6 +86,12 @@ public void initialize(){
                 if (KeyList.contains("ALT")){
                     aim.AimToMeteor(MeteorList, false);
                     KeyList.remove("ALT");
+                }
+
+                //Действие при вводе буквы
+                if (new Model().IndexRusEng(KeyList) != -1){
+                    aim.Fire(KeyList.get(0).toCharArray()[0]);
+                    KeyList.remove(new Model().IndexRusEng(KeyList));
                 }
 
                 //Очитска формы
