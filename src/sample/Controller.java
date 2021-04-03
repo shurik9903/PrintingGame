@@ -8,6 +8,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,6 +44,9 @@ public void initialize(){
         ArrayList<Model.Meteor> MeteorList = new ArrayList<>();
         for (int i = 0; i < Game.MeteorsCount; i++)
             MeteorList.add(new Model.Meteor("Image/Asteroid.png", cBasic.getHeight(), cBasic.getWidth()));
+
+        //Создание списка пуль
+        ArrayList<Model.Bullet> BulletList = new ArrayList<>();
 
         //Список нажатых клавишь
         ArrayList<String> KeyList = new ArrayList<>();
@@ -90,23 +94,37 @@ public void initialize(){
 
                 //Действие при вводе буквы
                 if (new Model().IndexRusEng(KeyList) != -1){
-                    aim.Fire(KeyList.get(0).toCharArray()[0]);
+                    if (aim.TargetMeteor != null)
+                    BulletList.add(new Model.Bullet(100,400, MeteorList.get(aim.NumberToMeteor)));
                     KeyList.remove(new Model().IndexRusEng(KeyList));
                 }
+
+                //Удаление уничтоженных метеоритов
+                MeteorList.removeIf(Meteor -> Meteor.Text.Destroy);
 
                 //Очитска формы
                 gcBasic.clearRect(0,0, cBasic.getWidth(), cBasic.getHeight());
 
+
+
                 //Обновление списка метеоритов
-                for (Model.Sprite Meteor : MeteorList)
+                for (Model.Meteor Meteor : MeteorList)
                     Meteor.update(deltaTime);
+
+                //Обновление списка снарядов
+                for (Model.Bullet Bullet : BulletList)
+                    Bullet.update(deltaTime);
 
                 //Обновление прицела
                 aim.update(deltaTime);
 
                 //Отрисовка списка метеоритов
-                for (Model.Sprite Meteor : MeteorList)
+                for (Model.Meteor Meteor : MeteorList)
                     Meteor.render(gcBasic);
+
+                //Отрисовка списка снарядов
+                for (Model.Bullet Bullet : BulletList)
+                    Bullet.render(gcBasic);
 
                 //Отрисовка прицела
                 aim.render(gcBasic);

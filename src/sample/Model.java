@@ -98,8 +98,7 @@ public class Model {
     //Функция получения слачайного слово из файла словаря
     public String getRandomWord(){
         try (Stream<String> lines = Files.lines(Paths.get("./src/sample/Text.txt"), StandardCharsets.UTF_8)) {
-            String text = lines.skip(getRandomNumber(0,10392)).findFirst().get();
-            return text;
+            return lines.skip(getRandomNumber(0,10392)).findFirst().get();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -172,7 +171,7 @@ public class Model {
         }
 
         //Расчет угла между двумя векторами
-        public  double getAngle2Vectors(double x1, double y1, double x2, double y2){
+        public double getAngle2Vectors(double x1, double y1, double x2, double y2){
             x1 -= this.x;
             y1 -= this.y;
             x2 -= this.x;
@@ -293,7 +292,7 @@ public class Model {
 
     //Класс Метеорит: Содержит описание метеоритов и их поведение
 	public static class Meteor extends Sprite{
-		
+
 		double BoxHeight, BoxWidth;
 		public TextToObject Text;
 
@@ -302,7 +301,7 @@ public class Model {
 			this.BoxHeight = BoxHeight;
 			this.BoxWidth = BoxWidth;
 			position.set(new Model().getRandomNumber(-200, (int)BoxWidth+200), -100);
-			velocity.setLength(10);
+			velocity.setLength(25);
 			rotation = setFall();
             velocity.setAngle(rotation);
             boundary.setSize(10,10);
@@ -376,6 +375,9 @@ public class Model {
 
     //Класс форма с текстом: расположение, длина и текст формы
     public static class TextToObject{
+
+        public boolean Destroy;
+        int NumberToHits;
         public double x,y;
         public double Width, Height;
         public int CountWord;
@@ -390,6 +392,8 @@ public class Model {
             this.Height = Height;
             CreateFrame();
             setCoordinate(x, y);
+            Destroy = false;
+            NumberToHits = 0;
         }
 
         //Установка координат формы
@@ -426,15 +430,22 @@ public class Model {
         }
 
 
-        //Смена изображения с целой буквы на поломанную
+        //Смена изображения с целой буквы на поломанную и проверка на уничтожение метеорита
         public void ChangeImage(Character c){
-            for (ArrayList<MyImage> i : FrameText)
+            for (ArrayList<MyImage> i : FrameText) {
                 if (i.get(0).ImageName.equals(c.toString()) && !i.get(0).Type) {
                     MyImage m = i.get(0);
-                    i.set(0,i.get(1));
-                    i.set(1,m);
+                    i.set(0, i.get(1));
+                    i.set(1, m);
+                    NumberToHits++;
+                    if (NumberToHits == FrameText.size())
+                        Destroy = true;
                     return;
                 }
+                if (!i.get(0).ImageName.equals(c.toString()) && !i.get(0).Type)
+                    return;
+
+            }
 
         }
 
@@ -504,12 +515,6 @@ public class Model {
             TargetMeteor = meteor.get(NumberToMeteor);
         }
 
-        //Огонь по метеориту
-        public void Fire(Character c){
-            if (TargetCaught)
-                TargetMeteor.Text.ChangeImage(c);
-        }
-
         //Движение к нацеленному метеориту
         public void MoveToTarget(){
           if (this.overlaps(TargetMeteor))
@@ -544,6 +549,83 @@ public class Model {
         public void render(GraphicsContext gc){
             super.render(gc);
 
+        }
+
+    }
+
+    public static class Bullet extends Sprite{
+
+        public Bullet(double startX, double startY, Meteor meteor){
+            super("Image/bullet.png",25);
+            position.set(startX, startY);
+            velocity.setLength(50);
+            MoveToTarget(meteor);
+        }
+
+        public void MoveToTarget(Meteor meteor){
+
+            LeadCalculation(meteor);
+            velocity.setAngle(rotation);
+        }
+
+        public void LeadCalculation(Meteor meteor){
+
+            System.out.println("Meteor: " + meteor.position.x +" | "+meteor.position.y);
+            System.out.println("Bullet: " + position.x + " | " + position.y);
+            double distance = position.getLength( meteor.position.x - position.x, position.y - meteor.position.y - position.y);
+            System.out.println("Distance: " + distance);
+            double Time = distance/velocity.x;
+
+
+            Point2D A =
+                    new Point2D(meteor.position.x - position.x, meteor.position.y  - position.y);
+            double angle1 = A.angle(1, 0);
+            if (A.getY() > 0)
+                angle1 = angle1;
+            else
+                angle1 = -angle1;
+            System.out.println("X: " + (meteor.position.x - position.x));
+            System.out.println("Y: " + (meteor.position.y  - position.y));
+            System.out.println("Angle1: " + angle1);
+            //
+            Point2D B =
+                    new Point2D(meteor.position.x + (meteor.velocity.x * Time) - position.x,
+                            meteor.position.y + (meteor.velocity.y * Time) - position.y);
+            double angle2 = B.angle(1, 0);
+            if (B.getY() > 0)
+                angle2 = angle2;
+            else
+                angle2 = -angle2;
+
+            rotation = angle2;
+
+            System.out.println("X: " + (meteor.position.x + (meteor.velocity.x * Time) - position.x));
+            System.out.println("Y: " + (meteor.position.y + (meteor.velocity.y * Time) - position.y));
+            System.out.println("Angle2: " + angle2);
+
+            //System.out.println(rotation);
+
+
+
+
+        }
+/*
+        //Огонь по метеориту
+        public void Fire(Character c){
+                TargetMeteor.Text.ChangeImage(c);
+        }
+        */
+
+        //Обновление объекта
+        @Override
+        public void update(double deltaTime){
+            super.update(deltaTime);
+        }
+
+        //Отрисовка объекта
+        @Override
+        public void render(GraphicsContext gc){
+            super.render(gc);
         }
 
     }
