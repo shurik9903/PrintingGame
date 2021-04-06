@@ -3,6 +3,7 @@ package sample;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -304,7 +305,7 @@ public class Model {
 			velocity.setLength(25);
 			rotation = setFall();
             velocity.setAngle(rotation);
-            boundary.setSize(10,10);
+            boundary.setSize(20,20);
 			Text = new TextToObject(this.position.x, this.position.y + this.image.getHeight()/2,
                     25,25, new Model().getRandomWord());
 		}
@@ -517,6 +518,7 @@ public class Model {
 
         //Движение к нацеленному метеориту
         public void MoveToTarget(){
+
           if (this.overlaps(TargetMeteor))
                 TargetCaught = true;
 
@@ -553,62 +555,56 @@ public class Model {
 
     }
 
-    public static class Bullet extends Sprite{
+    public static class Laser {
 
-        public Bullet(double startX, double startY, Meteor meteor){
-            super("Image/bullet.png",25);
-            position.set(startX, startY);
-            velocity.setLength(50);
-            MoveToTarget(meteor);
+        public Vector start, end, velocity;
+        public Rectangle boundary;
+        public Meteor meteor;
+        public boolean HitEnd, HitStart;
+
+        public Laser(double StartX, double StartY, Meteor meteor) {
+            start = new Vector(StartX, StartY);
+            end = new Vector(StartX, StartY);
+            velocity = new Vector();
+            boundary = new Rectangle();
+
+            HitEnd = false;
+            HitStart = false;
+            this.meteor = meteor;
+            velocity.setLength(3000);
+            LaserMoveToTarget(end);
+            boundary.setSize(10,10);
         }
 
-        public void MoveToTarget(Meteor meteor){
+        private void LaserMoveToTarget(Vector v){
 
-            LeadCalculation(meteor);
-            velocity.setAngle(rotation);
-        }
+            boundary.setPosition(v.x, v.y);
 
-        public void LeadCalculation(Meteor meteor){
+            if (boundary.overlaps(meteor.boundary) && !HitEnd) {
+                HitEnd = true;
+                this.velocity = new Vector();
+                this.velocity.setLength(3000);
+                return;
+            }
 
-            System.out.println("Meteor: " + meteor.position.x +" | "+meteor.position.y);
-            System.out.println("Bullet: " + position.x + " | " + position.y);
-            double distance = position.getLength( meteor.position.x - position.x, position.y - meteor.position.y - position.y);
-            System.out.println("Distance: " + distance);
-            double Time = distance/velocity.x;
+            if (boundary.overlaps(meteor.boundary) && HitEnd){
+                HitStart = true;
+            }
 
+            if (HitEnd){
+                this.end.y = meteor.position.y;
+                this.end.x = meteor.position.x;
+            }
 
-            Point2D A =
-                    new Point2D(meteor.position.x - position.x, meteor.position.y  - position.y);
-            double angle1 = A.angle(1, 0);
-            if (A.getY() > 0)
-                angle1 = angle1;
+            Point2D vector =
+                    new Point2D(meteor.position.x - v.x, meteor.position.y - v.y);
+            double angle = vector.angle(1, 0);
+            if (vector.getY() > 0)
+                velocity.setAngle(angle);
             else
-                angle1 = -angle1;
-            System.out.println("X: " + (meteor.position.x - position.x));
-            System.out.println("Y: " + (meteor.position.y  - position.y));
-            System.out.println("Angle1: " + angle1);
-            //
-            Point2D B =
-                    new Point2D(meteor.position.x + (meteor.velocity.x * Time) - position.x,
-                            meteor.position.y + (meteor.velocity.y * Time) - position.y);
-            double angle2 = B.angle(1, 0);
-            if (B.getY() > 0)
-                angle2 = angle2;
-            else
-                angle2 = -angle2;
-
-            rotation = angle2;
-
-            System.out.println("X: " + (meteor.position.x + (meteor.velocity.x * Time) - position.x));
-            System.out.println("Y: " + (meteor.position.y + (meteor.velocity.y * Time) - position.y));
-            System.out.println("Angle2: " + angle2);
-
-            //System.out.println(rotation);
-
-
-
-
+                velocity.setAngle(-angle);
         }
+
 /*
         //Огонь по метеориту
         public void Fire(Character c){
@@ -617,16 +613,33 @@ public class Model {
         */
 
         //Обновление объекта
-        @Override
-        public void update(double deltaTime){
-            super.update(deltaTime);
+
+        public void update(double deltaTime) {
+            if (!HitEnd) {
+                LaserMoveToTarget(end);
+                this.end.add(this.velocity.x * deltaTime, this.velocity.y * deltaTime);
+            } else {
+                LaserMoveToTarget(start);
+                this.start.add(this.velocity.x * deltaTime, this.velocity.y * deltaTime);
+            }
+
         }
 
         //Отрисовка объекта
-        @Override
-        public void render(GraphicsContext gc){
-            super.render(gc);
+
+        public void render(GraphicsContext gc) {
+            gc.save();
+
+            gc.setStroke(Color.RED);
+            gc.setLineWidth(5);
+            gc.beginPath();
+            gc.moveTo(start.x,start.y);
+            gc.lineTo(end.x, end.y);
+            gc.stroke();
+
+            gc.restore();
         }
 
     }
 }
+

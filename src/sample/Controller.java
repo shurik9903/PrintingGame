@@ -46,7 +46,7 @@ public void initialize(){
             MeteorList.add(new Model.Meteor("Image/Asteroid.png", cBasic.getHeight(), cBasic.getWidth()));
 
         //Создание списка пуль
-        ArrayList<Model.Bullet> BulletList = new ArrayList<>();
+        ArrayList<Model.Laser> LaserList = new ArrayList<>();
 
         //Список нажатых клавишь
         ArrayList<String> KeyList = new ArrayList<>();
@@ -82,25 +82,30 @@ public void initialize(){
 
                 //Действие при нажатии правого альта
                 if (KeyList.contains("ALT_GRAPH")){
+
                     aim.AimToMeteor(MeteorList, true);
                     KeyList.remove("ALT_GRAPH");
                 }
 
                 //Действие при нажатии левого альта
                 if (KeyList.contains("ALT")){
+
                     aim.AimToMeteor(MeteorList, false);
                     KeyList.remove("ALT");
                 }
 
                 //Действие при вводе буквы
                 if (new Model().IndexRusEng(KeyList) != -1){
-                    if (aim.TargetMeteor != null)
-                    BulletList.add(new Model.Bullet(100,400, MeteorList.get(aim.NumberToMeteor)));
+                    if (aim.TargetMeteor != null && aim.TargetCaught)
+                    LaserList.add(new Model.Laser(100,400, MeteorList.get(aim.NumberToMeteor)));
                     KeyList.remove(new Model().IndexRusEng(KeyList));
                 }
 
                 //Удаление уничтоженных метеоритов
                 MeteorList.removeIf(Meteor -> Meteor.Text.Destroy);
+
+                //Удаление лазеров
+                LaserList.removeIf(Laser -> Laser.HitStart);
 
                 //Очитска формы
                 gcBasic.clearRect(0,0, cBasic.getWidth(), cBasic.getHeight());
@@ -112,8 +117,8 @@ public void initialize(){
                     Meteor.update(deltaTime);
 
                 //Обновление списка снарядов
-                for (Model.Bullet Bullet : BulletList)
-                    Bullet.update(deltaTime);
+                for (Model.Laser Laser : LaserList)
+                    Laser.update(deltaTime);
 
                 //Обновление прицела
                 aim.update(deltaTime);
@@ -123,8 +128,8 @@ public void initialize(){
                     Meteor.render(gcBasic);
 
                 //Отрисовка списка снарядов
-                for (Model.Bullet Bullet : BulletList)
-                    Bullet.render(gcBasic);
+                for (Model.Laser Laser : LaserList)
+                    Laser.render(gcBasic);
 
                 //Отрисовка прицела
                 aim.render(gcBasic);
