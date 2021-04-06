@@ -15,6 +15,20 @@ import java.util.stream.Stream;
 
 public class Model {
 
+    public int setID(ArrayList<Meteor> meteors){
+
+        if (meteors.size() == 0) return 1;
+
+        ArrayList<Integer> BusyID = new ArrayList<>();
+        for (Meteor meteor : meteors)
+            BusyID.add(meteor.ID);
+        for (int i = 1; i < 1000; i++){
+            if (!BusyID.contains(i)) return i;
+        }
+        return 0;
+    }
+
+
     static class MyImage extends Image{
 
         private String ImageName;
@@ -289,6 +303,17 @@ public class Model {
             gc.restore();
         }
 
+        public double getAngleToTarget(Sprite other){
+
+            Point2D vector =
+                    new Point2D(other.position.x - position.x, other.position.y - position.y);
+            double angle = vector.angle(1, 0);
+            if (vector.getY() > 0)
+                return angle;
+            else
+                return -angle;
+        }
+
     }
 
     //Класс Метеорит: Содержит описание метеоритов и их поведение
@@ -296,18 +321,20 @@ public class Model {
 
 		double BoxHeight, BoxWidth;
 		public TextToObject Text;
+		public final int ID;
 
-		public Meteor(String fileImageName,double BoxHeight, double BoxWidth ){
+		public Meteor(String fileImageName,double BoxHeight, double BoxWidth, int ID ){
 			super(fileImageName, new Model().getRandomNumber(50,150));
 			this.BoxHeight = BoxHeight;
 			this.BoxWidth = BoxWidth;
 			position.set(new Model().getRandomNumber(-200, (int)BoxWidth+200), -100);
 			velocity.setLength(25);
 			rotation = setFall();
+			this.ID = ID;
             velocity.setAngle(rotation);
             boundary.setSize(20,20);
 			Text = new TextToObject(this.position.x, this.position.y + this.image.getHeight()/2,
-                    25,25, new Model().getRandomWord());
+                    25,25, new Model().getRandomWord(), ID);
 		}
 
 		//Угол падения между случайным минимальным и максимальным углом
@@ -381,40 +408,46 @@ public class Model {
         int NumberToHits;
         public double x,y;
         public double Width, Height;
-        public int CountWord;
         public String Text;
-        public ArrayList<Image> FrameImage;
+        public ArrayList<Image> FrameImage, FrameNumber;
         public ArrayList<ArrayList<MyImage>> FrameText;
+        private final int MeteorID;
 
-        public TextToObject(double x, double y, double Width, double Height, String Text){
+        public TextToObject(double x, double y, double Width, double Height, String Text, int ID){
             this.Text = Text;
-            this.CountWord = Text.length();
             this.Width = Width;
             this.Height = Height;
-            CreateFrame();
-            setCoordinate(x, y);
             Destroy = false;
             NumberToHits = 0;
+            MeteorID = ID;
+            CreateFrame();
+            setCoordinate(x, y);
+            System.out.println(Text);
         }
 
         //Установка координат формы
         public void setCoordinate(double x, double y){
-            this.x = x - (((2 + this.CountWord) * this.Width) / 2);
+            this.x = x - (((2 + Text.length() + (int)(MeteorID / 10)) * this.Width) / 2);
             this.y = y + 10;
         }
 
         //Описание формы и текста
         public void CreateFrame(){
+
             Image FStart = new Image("Image/R1.png", this.Width,this.Height,false,false);
             Image FEnd = new Image("Image/R3.png", this.Width,this.Height,false,false);
             Image FMiddle = new Image("Image/R2.png", this.Width,this.Height,false,false);
 
             this.FrameImage = new ArrayList<>();
             this.FrameImage.add(FStart);
-            for (int i = 0; i < this.CountWord; i++){
+            for (int i = 0; i < Text.length() + (int)(MeteorID / 10); i++){
                 this.FrameImage.add(FMiddle);
             }
             this.FrameImage.add(FEnd);
+
+            FrameNumber = new ArrayList<>();
+            for (Character i: String.valueOf(MeteorID).toCharArray())
+                FrameNumber.add(new Image("Image/NumberImage/"+ i +".png", this.Width,this.Height,false,false));
 
             this.FrameText = new ArrayList<>();
             for (Character i : this.Text.toCharArray()){
@@ -432,7 +465,7 @@ public class Model {
 
 
         //Смена изображения с целой буквы на поломанную и проверка на уничтожение метеорита
-        public void ChangeImage(Character c){
+        public boolean ChangeImage(Character c){
             for (ArrayList<MyImage> i : FrameText) {
                 if (i.get(0).ImageName.equals(c.toString()) && !i.get(0).Type) {
                     MyImage m = i.get(0);
@@ -441,30 +474,37 @@ public class Model {
                     NumberToHits++;
                     if (NumberToHits == FrameText.size())
                         Destroy = true;
-                    return;
+                    return true;
                 }
                 if (!i.get(0).ImageName.equals(c.toString()) && !i.get(0).Type)
-                    return;
-
+                    return false;
             }
-
+            return false;
         }
 
         //Отрисовка объекта
         public void render(GraphicsContext gc){
             gc.save();
 
-            int Count = 0;
+            int TextCount = 0;
+            int NumberCount = 0;
+
             gc.translate(this.x, this.y);
 
             for (Image i : this.FrameImage) {
                 gc.translate(+ this.Width,0);
-
                 gc.drawImage(i, 0, 0);
-                if (Count <= this.CountWord && Count > 0)
-                    gc.drawImage(this.FrameText.get(Count-1).get(0), 0, 0);
-                Count++;
-            }
+
+                if (NumberCount < FrameNumber.size()) {
+                    gc.drawImage(this.FrameNumber.get(NumberCount), 0, 0);
+                    NumberCount++;
+                } else {
+                    if (TextCount < Text.length()) {
+                        gc.drawImage(this.FrameText.get(TextCount).get(0), 0, 0);
+                        TextCount++;
+                    }
+                }
+                }
 
             gc.restore();
         }
@@ -495,7 +535,6 @@ public class Model {
         public void AimToMeteor(ArrayList<Meteor> meteor, boolean LR){
 
             TargetCaught = false;
-
             if (meteor.size() == 0) {
                 TargetMeteor = null;
                 velocity.setLength(0);
@@ -519,23 +558,23 @@ public class Model {
         //Движение к нацеленному метеориту
         public void MoveToTarget(){
 
-          if (this.overlaps(TargetMeteor))
-                TargetCaught = true;
-
-            if (TargetCaught){
-                this.position.y = TargetMeteor.position.y;
-                this.position.x = TargetMeteor.position.x;
-                velocity.setLength(0);
+            if (TargetMeteor.Text.Destroy) {
+                TargetCaught = false;
+                TargetMeteor = null;
                 return;
             }
 
-            Point2D vector =
-                    new Point2D(TargetMeteor.position.x - position.x, TargetMeteor.position.y - position.y);
-            double angle = vector.angle(1, 0);
-            if (vector.getY() > 0)
-                velocity.setAngle(angle);
-            else
-                velocity.setAngle(-angle);
+            if (this.overlaps(TargetMeteor))
+                TargetCaught = true;
+
+            if (TargetCaught){
+                  this.position.y = TargetMeteor.position.y;
+                  this.position.x = TargetMeteor.position.x;
+                  velocity.setLength(0);
+                  return;
+            }
+
+            velocity.setAngle(getAngleToTarget(TargetMeteor));
         }
 
         //Обновление объекта
@@ -545,99 +584,53 @@ public class Model {
             if (TargetMeteor != null)
                 MoveToTarget();
         }
-
-        //Отрисовка объекта
-        @Override
-        public void render(GraphicsContext gc){
-            super.render(gc);
-
-        }
-
     }
 
-    public static class Laser {
+    //Класс снаряда
+    public static class Projectile extends Sprite {
 
-        public Vector start, end, velocity;
-        public Rectangle boundary;
-        public Meteor meteor;
-        public boolean HitEnd, HitStart;
+        private Meteor meteor;
+        private boolean Miss;
+        public boolean Destroy;
+        private final char Letter;
+        double BoxHeight, BoxWidth;
 
-        public Laser(double StartX, double StartY, Meteor meteor) {
-            start = new Vector(StartX, StartY);
-            end = new Vector(StartX, StartY);
-            velocity = new Vector();
-            boundary = new Rectangle();
-
-            HitEnd = false;
-            HitStart = false;
-            this.meteor = meteor;
-            velocity.setLength(3000);
-            LaserMoveToTarget(end);
+        public Projectile(double StartX, double StartY, char Letter, double BoxHeight, double BoxWidth, Meteor meteor) {
+            super("Image/bullet.png",25);
+            position.x = StartX;
+            position.y = StartY;
+            velocity.setLength(500);
             boundary.setSize(10,10);
+            Miss = false;
+            Destroy = false;
+            this.Letter = Letter;
+            this.meteor = meteor;
+            this.BoxHeight = BoxHeight;
+            this.BoxWidth = BoxWidth;
         }
 
-        private void LaserMoveToTarget(Vector v){
-
-            boundary.setPosition(v.x, v.y);
-
-            if (boundary.overlaps(meteor.boundary) && !HitEnd) {
-                HitEnd = true;
-                this.velocity = new Vector();
-                this.velocity.setLength(3000);
-                return;
+        private void MoveAndFireToTarget(){
+            if (meteor == null) return;
+            if (overlaps(meteor) && !Miss) {
+                if (!meteor.Text.ChangeImage(Letter)) Miss = true;
+                else Destroy = true;
+            } else if (Miss){
+                if (position.x  < -50 ||
+                        BoxWidth + 50 < position.x ||
+                        position.y  < -50 ||
+                        BoxHeight + 50 < position.y) Destroy = true;
+            } else {
+                rotation = getAngleToTarget(meteor);
+                velocity.setAngle(rotation);
             }
-
-            if (boundary.overlaps(meteor.boundary) && HitEnd){
-                HitStart = true;
-            }
-
-            if (HitEnd){
-                this.end.y = meteor.position.y;
-                this.end.x = meteor.position.x;
-            }
-
-            Point2D vector =
-                    new Point2D(meteor.position.x - v.x, meteor.position.y - v.y);
-            double angle = vector.angle(1, 0);
-            if (vector.getY() > 0)
-                velocity.setAngle(angle);
-            else
-                velocity.setAngle(-angle);
         }
 
-/*
-        //Огонь по метеориту
-        public void Fire(Character c){
-                TargetMeteor.Text.ChangeImage(c);
-        }
-        */
 
         //Обновление объекта
-
+        @Override
         public void update(double deltaTime) {
-            if (!HitEnd) {
-                LaserMoveToTarget(end);
-                this.end.add(this.velocity.x * deltaTime, this.velocity.y * deltaTime);
-            } else {
-                LaserMoveToTarget(start);
-                this.start.add(this.velocity.x * deltaTime, this.velocity.y * deltaTime);
-            }
-
-        }
-
-        //Отрисовка объекта
-
-        public void render(GraphicsContext gc) {
-            gc.save();
-
-            gc.setStroke(Color.RED);
-            gc.setLineWidth(5);
-            gc.beginPath();
-            gc.moveTo(start.x,start.y);
-            gc.lineTo(end.x, end.y);
-            gc.stroke();
-
-            gc.restore();
+            super.update(deltaTime);
+            MoveAndFireToTarget();
         }
 
     }

@@ -38,23 +38,28 @@ public void initialize(){
         Model.Aim aim = new Model.Aim(cBasic.getHeight(), cBasic.getWidth());
 
         //Описание настроек игры
-        Model.GameOptions Game = new Model.GameOptions(1, 10);
+        Model.GameOptions Game = new Model.GameOptions(1, 1);
 
         //Создание списка метеоритов
         ArrayList<Model.Meteor> MeteorList = new ArrayList<>();
+
+
+
+
         for (int i = 0; i < Game.MeteorsCount; i++)
-            MeteorList.add(new Model.Meteor("Image/Asteroid.png", cBasic.getHeight(), cBasic.getWidth()));
+            MeteorList.add(new Model.Meteor("Image/Asteroid.png", cBasic.getHeight(), cBasic.getWidth(), new Model().setID(MeteorList)));
 
         //Создание списка пуль
-        ArrayList<Model.Laser> LaserList = new ArrayList<>();
+        ArrayList<Model.Projectile> ProjectileList = new ArrayList<>();
 
         //Список нажатых клавишь
         ArrayList<String> KeyList = new ArrayList<>();
-
+        ArrayList<String> NumberToTarget = new ArrayList<>();
         //Добавление действий на форму | Действие при нажатие клавиши
         APMenu.setOnKeyPressed(
                 (KeyEvent e) ->{
-                    if (!KeyHold.get()) {
+
+                    if (!KeyHold.get()){
                         if (e.getCode().toString().equals("CONTROL") || e.getCode().toString().equals("ALT_GRAPH"))
                             KeyList.add("ALT_GRAPH");
                         else if (e.getCode().toString().equals("ALT"))
@@ -65,12 +70,14 @@ public void initialize(){
                         System.out.println(KeyList);
                         KeyHold.set(true);
                     }
+
                 }
         );
 
         //Добавление действий на форму | Действие при отпускание клавиши
         APMenu.setOnKeyReleased(
                 (KeyEvent e) -> KeyHold.set(false)
+
         );
 
         //ArrayList<Method.Sprite> Bullet = new ArrayList<Method.Sprite>();
@@ -79,6 +86,8 @@ public void initialize(){
         AnimationTimer gameLoop = new AnimationTimer(){
             @Override
             public void handle(long nanotime){
+
+
 
                 //Действие при нажатии правого альта
                 if (KeyList.contains("ALT_GRAPH")){
@@ -97,7 +106,9 @@ public void initialize(){
                 //Действие при вводе буквы
                 if (new Model().IndexRusEng(KeyList) != -1){
                     if (aim.TargetMeteor != null && aim.TargetCaught)
-                    LaserList.add(new Model.Laser(100,400, MeteorList.get(aim.NumberToMeteor)));
+                        ProjectileList.add(new Model.Projectile(100,400,
+                                KeyList.get(0).toCharArray()[0], cBasic.getHeight(), cBasic.getWidth(),
+                                MeteorList.get(aim.NumberToMeteor)));
                     KeyList.remove(new Model().IndexRusEng(KeyList));
                 }
 
@@ -105,7 +116,7 @@ public void initialize(){
                 MeteorList.removeIf(Meteor -> Meteor.Text.Destroy);
 
                 //Удаление лазеров
-                LaserList.removeIf(Laser -> Laser.HitStart);
+                ProjectileList.removeIf(projectile -> projectile.Destroy);
 
                 //Очитска формы
                 gcBasic.clearRect(0,0, cBasic.getWidth(), cBasic.getHeight());
@@ -117,8 +128,8 @@ public void initialize(){
                     Meteor.update(deltaTime);
 
                 //Обновление списка снарядов
-                for (Model.Laser Laser : LaserList)
-                    Laser.update(deltaTime);
+                for (Model.Projectile projectile : ProjectileList)
+                    projectile.update(deltaTime);
 
                 //Обновление прицела
                 aim.update(deltaTime);
@@ -128,8 +139,8 @@ public void initialize(){
                     Meteor.render(gcBasic);
 
                 //Отрисовка списка снарядов
-                for (Model.Laser Laser : LaserList)
-                    Laser.render(gcBasic);
+                for (Model.Projectile projectile : ProjectileList)
+                    projectile.render(gcBasic);
 
                 //Отрисовка прицела
                 aim.render(gcBasic);
