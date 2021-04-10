@@ -3,6 +3,8 @@ package sample;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
 import java.io.*;
@@ -14,6 +16,80 @@ import java.util.stream.Stream;
 
 
 public class Model {
+
+    //Класс настройки игры: Содержит описание запущенной игры
+    public static class GameOptions{
+        public int Difficulty;
+        public int MeteorsCount;
+        public double gameTime;
+
+        GameOptions(int Difficulty, int MeteorsCount){
+            this.Difficulty = Difficulty;
+            this.MeteorsCount = MeteorsCount * Difficulty;
+            this.gameTime = 0;
+        }
+    }
+
+    public static class EnterToNumber{
+        private double x;
+        private double y;
+        private final double Width, Height;
+        private String Numbers;
+        private final ImageView Gun;
+        private ArrayList<Image> FrameNumber;
+
+
+        EnterToNumber(ImageView Gun, double Width, double Height){
+            Numbers = "";
+            this.Width = Width;
+            this.Height = Height;
+            this.Gun = Gun;
+            setCoordinate();
+        }
+
+        public void addNumber(Character c){
+            if (Numbers.length() < 3) Numbers += c;
+            else Numbers = "";
+            initialize();
+        }
+
+        public int getNumbers(){
+            int R = 0;
+            if (Numbers.length() != 0)
+                R = Integer.parseInt(Numbers);
+            Numbers = "";
+            initialize();
+            return R;
+        }
+
+        public void initialize(){
+            FrameNumber = new ArrayList<>();
+            for (Character i: String.valueOf(Numbers).toCharArray())
+                FrameNumber.add(new Image("Image/NumberImage/"+ i +".png", Width,Height,false,false));
+
+        }
+
+        //Установка координат формы
+        public void setCoordinate(){
+                x = Gun.getLayoutX();
+                y = Gun.getLayoutY() + Gun.getFitHeight()-Height;
+        }
+
+        //Отрисовка объекта
+        public void render(GraphicsContext gc){
+            gc.save();
+
+            gc.translate(this.x, this.y);
+            if (FrameNumber != null)
+                for (Image i : this.FrameNumber) {
+                    gc.translate(+ this.Width,0);
+                    gc.drawImage(i, 0, 0);
+                }
+
+            gc.restore();
+        }
+
+    }
 
     public int setID(ArrayList<Meteor> meteors){
 
@@ -27,7 +103,6 @@ public class Model {
         }
         return 0;
     }
-
 
     static class MyImage extends Image{
 
@@ -105,10 +180,20 @@ public class Model {
             if (arr.contains(i.toString()))
                 return arr.indexOf(i.toString());
 
-        return -1;
+            return -1;
 
     }
 
+    public int IndexNumber(ArrayList<String> arr){
+        ArrayList<Character> num = new ArrayList<>(
+                Arrays.asList('0','1','2','3','4','5','6','7','8','9'));
+
+        for (Character i: num)
+            if (arr.contains(i.toString()))
+                return arr.indexOf(i.toString());
+
+            return -1;
+    }
 
     //Функция получения слачайного слово из файла словаря
     public String getRandomWord(){
@@ -388,19 +473,6 @@ public class Model {
 
 	}
 
-    //Класс настройки игры: Содержит описание запущенной игры
-    public static class GameOptions{
-        public int Difficulty;
-        public int MeteorsCount;
-        public double gameTime;
-
-        GameOptions(int Difficulty, int MeteorsCount){
-            this.Difficulty = Difficulty;
-            this.MeteorsCount = MeteorsCount * Difficulty;
-            this.gameTime = 0;
-        }
-    }
-
     //Класс форма с текстом: расположение, длина и текст формы
     public static class TextToObject{
 
@@ -553,6 +625,25 @@ public class Model {
 
             velocity.setLength(300);
             TargetMeteor = meteor.get(NumberToMeteor);
+        }
+
+        public void AimToMeteor(ArrayList<Meteor> meteor, int Numb){
+            TargetCaught = false;
+            if (meteor.size() == 0) {
+                TargetMeteor = null;
+                velocity.setLength(0);
+                return;
+            }
+
+            for (Meteor m: meteor) {
+                NumberToMeteor++;
+                while (meteor.size() <= NumberToMeteor)
+                    NumberToMeteor -= meteor.size();
+                if (m.ID == Numb) {
+                    velocity.setLength(300);
+                    TargetMeteor = m;
+                }
+            }
         }
 
         //Движение к нацеленному метеориту

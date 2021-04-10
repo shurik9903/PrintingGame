@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane fx:id="APMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller" focusTraversable="true">
+<AnchorPane fx:id="APMenu" focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
       <ImageView fitHeight="470.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true" />
       <ImageView fitHeight="150.0" fitWidth="800.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">
@@ -157,7 +157,7 @@
                </children>
             </AnchorPane>
          </children></AnchorPane>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="109.0" layoutY="320.0" pickOnBounds="true" rotate="180.0">
+      <ImageView fx:id="Gun" fitHeight="150.0" fitWidth="200.0" layoutX="300.0" layoutY="320.0" pickOnBounds="true" rotate="180.0">
          <image>
             <Image url="@../Image/8ogch83.png" />
          </image></ImageView>

@@ -4,8 +4,11 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 
 
 import java.lang.reflect.Method;
@@ -20,6 +23,9 @@ private Canvas cBasic;
 
 @FXML
 private AnchorPane APMenu;
+
+@FXML
+private ImageView Gun;
 
 //Инициализация при запуске формы
 @FXML
@@ -37,13 +43,14 @@ public void initialize(){
         //Прицел игрока
         Model.Aim aim = new Model.Aim(cBasic.getHeight(), cBasic.getWidth());
 
+        //Форма отображения набранных цифр
+        Model.EnterToNumber EntNumber = new Model.EnterToNumber(Gun,40,40);
+
         //Описание настроек игры
         Model.GameOptions Game = new Model.GameOptions(1, 1);
 
         //Создание списка метеоритов
         ArrayList<Model.Meteor> MeteorList = new ArrayList<>();
-
-
 
 
         for (int i = 0; i < Game.MeteorsCount; i++)
@@ -60,12 +67,18 @@ public void initialize(){
                 (KeyEvent e) ->{
 
                     if (!KeyHold.get()){
-                        if (e.getCode().toString().equals("CONTROL") || e.getCode().toString().equals("ALT_GRAPH"))
+                        if (e.getCode().toString().equals("SHIFT"))
+                            KeyList.add("SHIFT");
+                        else if (e.getCode().toString().equals("CONTROL") || e.getCode().toString().equals("ALT_GRAPH"))
                             KeyList.add("ALT_GRAPH");
                         else if (e.getCode().toString().equals("ALT"))
                             KeyList.add(e.getCode().toString());
                         else if (e.getText().length() == 1)
-                            KeyList.add(new Model().RusText(e.getText().toCharArray()[0]));
+                            if (e.getText().matches("[-+]?\\d+")) {
+                                KeyList.add(e.getText().toString());
+                            } else {
+                                KeyList.add(new Model().RusText(e.getText().toCharArray()[0]));
+                            }
                         KeyList.remove("");
                         System.out.println(KeyList);
                         KeyHold.set(true);
@@ -87,26 +100,32 @@ public void initialize(){
             @Override
             public void handle(long nanotime){
 
-
+                if (new Model().IndexNumber(KeyList) != -1){
+                    EntNumber.addNumber(KeyList.get(0).toCharArray()[0]);
+                    KeyList.remove(new Model().IndexNumber(KeyList));
+                }
 
                 //Действие при нажатии правого альта
                 if (KeyList.contains("ALT_GRAPH")){
-
                     aim.AimToMeteor(MeteorList, true);
                     KeyList.remove("ALT_GRAPH");
                 }
 
                 //Действие при нажатии левого альта
                 if (KeyList.contains("ALT")){
-
                     aim.AimToMeteor(MeteorList, false);
                     KeyList.remove("ALT");
+                }
+
+                if (KeyList.contains("SHIFT")){
+                    aim.AimToMeteor(MeteorList, EntNumber.getNumbers());
+                    KeyList.remove("SHIFT");
                 }
 
                 //Действие при вводе буквы
                 if (new Model().IndexRusEng(KeyList) != -1){
                     if (aim.TargetMeteor != null && aim.TargetCaught)
-                        ProjectileList.add(new Model.Projectile(100,400,
+                        ProjectileList.add(new Model.Projectile(Gun.getLayoutX()+Gun.getFitWidth()/2,Gun.getLayoutY(),
                                 KeyList.get(0).toCharArray()[0], cBasic.getHeight(), cBasic.getWidth(),
                                 MeteorList.get(aim.NumberToMeteor)));
                     KeyList.remove(new Model().IndexRusEng(KeyList));
@@ -115,7 +134,7 @@ public void initialize(){
                 //Удаление уничтоженных метеоритов
                 MeteorList.removeIf(Meteor -> Meteor.Text.Destroy);
 
-                //Удаление лазеров
+                //Удаление снарядов
                 ProjectileList.removeIf(projectile -> projectile.Destroy);
 
                 //Очитска формы
@@ -144,6 +163,7 @@ public void initialize(){
 
                 //Отрисовка прицела
                 aim.render(gcBasic);
+                EntNumber.render(gcBasic);
 
             }
         };
