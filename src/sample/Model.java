@@ -22,11 +22,15 @@ public class Model {
         public int Difficulty;
         public int MeteorsCount;
         public double gameTime;
+        public double Score;
+        public int Life;
 
         GameOptions(int Difficulty, int MeteorsCount){
             this.Difficulty = Difficulty;
             this.MeteorsCount = MeteorsCount * Difficulty;
-            this.gameTime = 0;
+            gameTime = 0;
+            Score = 0;
+            Life = 3;
         }
     }
 
@@ -35,15 +39,14 @@ public class Model {
         private double y;
         private final double Width, Height;
         private String Numbers;
-        private final ImageView Gun;
+        private final Gun Player;
         private ArrayList<Image> FrameNumber;
 
-
-        EnterToNumber(ImageView Gun, double Width, double Height){
+        EnterToNumber(Gun Player, double Width, double Height){
             Numbers = "";
             this.Width = Width;
             this.Height = Height;
-            this.Gun = Gun;
+            this.Player = Player;
             setCoordinate();
         }
 
@@ -71,8 +74,8 @@ public class Model {
 
         //Установка координат формы
         public void setCoordinate(){
-                x = Gun.getLayoutX();
-                y = Gun.getLayoutY() + Gun.getFitHeight()-Height;
+                x = Player.position.x - Player.image.getWidth()/2;
+                y = Player.position.y + Player.image.getHeight()/2 - Height;
         }
 
         //Отрисовка объекта
@@ -351,8 +354,17 @@ public class Model {
             setImage(fileImageName);
         }
 
+        public Sprite(String fileImageName, double Width, double Height){
+            this();
+            setImage(fileImageName, Width, Height);
+        }
+
         public void setImage(String fileImageName, double sizeImage){
             this.image = new Image(fileImageName, sizeImage,sizeImage,false,false);
+        }
+
+        public void setImage(String fileImageName, double Width, double Height){
+            this.image = new Image(fileImageName, Width, Height,false,false);
         }
 
         public void setImage(String fileImageName){
@@ -389,7 +401,6 @@ public class Model {
         }
 
         public double getAngleToTarget(Sprite other){
-
             Point2D vector =
                     new Point2D(other.position.x - position.x, other.position.y - position.y);
             double angle = vector.angle(1, 0);
@@ -407,13 +418,14 @@ public class Model {
 		double BoxHeight, BoxWidth;
 		public TextToObject Text;
 		public final int ID;
+		public boolean Fall = false;
 
-		public Meteor(String fileImageName,double BoxHeight, double BoxWidth, int ID ){
-			super(fileImageName, new Model().getRandomNumber(50,150));
+		public Meteor(double BoxHeight, double BoxWidth, int ID){
+			super("Image/Asteroid.png", new Model().getRandomNumber(50,150));
 			this.BoxHeight = BoxHeight;
 			this.BoxWidth = BoxWidth;
 			position.set(new Model().getRandomNumber(-200, (int)BoxWidth+200), -100);
-			velocity.setLength(25);
+			velocity.setLength(new Model().getRandomNumber(10, 50));
 			rotation = setFall();
 			this.ID = ID;
             velocity.setAngle(rotation);
@@ -462,6 +474,7 @@ public class Model {
         public void update(double deltaTime){
             super.update(deltaTime);
             this.Text.setCoordinate(this.position.x, this.position.y + this.image.getHeight()/2);
+            if (position.y > BoxHeight - 50) Fall = true;
         }
 
         //отрисовка объекта
@@ -590,12 +603,13 @@ public class Model {
         Meteor TargetMeteor;
         int NumberToMeteor;
         boolean TargetCaught;
-
-        public Aim(double BoxHeight, double BoxWidth){
+        private final Gun Player;
+        public Aim(double BoxHeight, double BoxWidth, Gun Player){
             super("Image/Aim.png", 100);
             this.BoxWidth = BoxWidth;
             this.BoxHeight = BoxHeight;
             this.boundary.setSize(10,10);
+            this.Player = Player;
             TargetMeteor = null;
             NumberToMeteor = -1;
             TargetCaught = false;
@@ -623,7 +637,7 @@ public class Model {
                     NumberToMeteor = meteor.size()-1;
             }
 
-            velocity.setLength(300);
+            velocity.setLength(500);
             TargetMeteor = meteor.get(NumberToMeteor);
         }
 
@@ -649,7 +663,7 @@ public class Model {
         //Движение к нацеленному метеориту
         public void MoveToTarget(){
 
-            if (TargetMeteor.Text.Destroy) {
+            if (TargetMeteor.Text.Destroy || TargetMeteor.position.y >= Player.position.y ) {
                 TargetCaught = false;
                 TargetMeteor = null;
                 return;
@@ -680,18 +694,19 @@ public class Model {
     //Класс снаряда
     public static class Projectile extends Sprite {
 
-        private Meteor meteor;
+        private final Meteor meteor;
         private boolean Miss;
         public boolean Destroy;
         private final char Letter;
         double BoxHeight, BoxWidth;
+        private final Gun Player;
 
-        public Projectile(double StartX, double StartY, char Letter, double BoxHeight, double BoxWidth, Meteor meteor) {
+        public Projectile(Gun Player, char Letter, double BoxHeight, double BoxWidth, Meteor meteor) {
             super("Image/bullet.png",25);
-            position.x = StartX;
-            position.y = StartY;
+            this.Player = Player;
+            Position();
             velocity.setLength(500);
-            boundary.setSize(10,10);
+            boundary.setSize(20,20);
             Miss = false;
             Destroy = false;
             this.Letter = Letter;
@@ -700,12 +715,19 @@ public class Model {
             this.BoxWidth = BoxWidth;
         }
 
+        private void Position(){
+            double L = Player.image.getHeight()/2;
+            double angleRadian = Math.toRadians(Player.rotation);
+            position.x = Player.position.x + L * Math.cos(angleRadian);
+            position.y = Player.position.y + L * Math.sin(angleRadian);
+        }
+
         private void MoveAndFireToTarget(){
             if (meteor == null) return;
-            if (overlaps(meteor) && !Miss) {
+            if (overlaps(meteor) && !Miss)
                 if (!meteor.Text.ChangeImage(Letter)) Miss = true;
-                else Destroy = true;
-            } else if (Miss){
+                    else Destroy = true;
+            else if (Miss){
                 if (position.x  < -50 ||
                         BoxWidth + 50 < position.x ||
                         position.y  < -50 ||
@@ -716,6 +738,16 @@ public class Model {
             }
         }
 
+        @Override
+        public double getAngleToTarget(Sprite other){
+            Point2D vector =
+                    new Point2D(other.position.x - Player.position.x, other.position.y - Player.position.y);
+            double angle = vector.angle(1, 0);
+            if (vector.getY() > 0)
+                return angle;
+            else
+                return -angle;
+        }
 
         //Обновление объекта
         @Override
@@ -725,5 +757,16 @@ public class Model {
         }
 
     }
+
+    //Класс орудие
+    public static class Gun extends Sprite{
+        public Gun(double Size, double PosX, double PosY){
+            super("Image/Gun.png", Size);
+            position.x = PosX;
+            position.y = PosY;
+            boundary.setSize(Size, Size);
+        }
+    }
+
 }
 

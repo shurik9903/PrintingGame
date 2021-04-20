@@ -4,7 +4,6 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 
 <AnchorPane fx:id="APMenu" focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
@@ -14,152 +13,17 @@
             <Image url="@../Image/Screenshot_1.png" />
          </image>
       </ImageView>
-      <Canvas fx:id="cBasic" height="470.0" width="800.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <Canvas fx:id="GameCanvas" height="470.0" width="800.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <AnchorPane layoutY="470.0" prefHeight="130.0" prefWidth="800.0" style="-fx-background-color: Yellow;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="470.0">
          <children>
-            <ImageView fitHeight="130.0" fitWidth="130.0" layoutX="335.0" pickOnBounds="true">
+            <Canvas fx:id="GamePanelCanvas" height="130.0" layoutX="2.0" layoutY="1.0" width="800.0" />
+            <ImageView fitHeight="148.0" fitWidth="148.0" layoutX="326.0" pickOnBounds="true">
                <image>
                   <Image url="@../Image/stock_draw-sphere.png" />
                </image></ImageView>
-            <AnchorPane layoutX="111.0" layoutY="65.0" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: Black;">
-               <children>
-                  <HBox prefHeight="35.0" prefWidth="200.0">
-                     <children>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/Screenshot_2.png" />
-                           </image>
-                        </ImageView>
-                     </children>
-                  </HBox>
-               </children>
-            </AnchorPane>
-            <AnchorPane layoutX="111.0" layoutY="14.0" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: Black;">
-               <children>
-                  <HBox prefHeight="35.0" prefWidth="200.0">
-                     <children>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="35.0" fitWidth="20.0" pickOnBounds="true">
-                           <image>
-                              <Image url="@../Image/images.png" />
-                           </image>
-                        </ImageView>
-                     </children>
-                  </HBox>
-               </children>
-            </AnchorPane>
-            <AnchorPane layoutX="21.0" layoutY="30.0" prefHeight="70.0" prefWidth="70.0">
-               <children>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="6.0" layoutY="26.0" pickOnBounds="true" rotate="-120.0">
-                     <image>
-                        <Image url="@../Image/like.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="36.0" layoutY="26.0" pickOnBounds="true" rotate="120.0">
-                     <image>
-                        <Image url="@../Image/like.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="20.0" pickOnBounds="true">
-                     <image>
-                        <Image url="@../Image/like.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </AnchorPane>
+            <AnchorPane layoutX="111.0" layoutY="65.0" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: Black;" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="111.0" AnchorPane.rightAnchor="489.0" AnchorPane.topAnchor="65.0" />
+            <AnchorPane layoutX="111.0" layoutY="14.0" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: Black;" AnchorPane.bottomAnchor="81.0" AnchorPane.leftAnchor="111.0" AnchorPane.rightAnchor="489.0" AnchorPane.topAnchor="14.0" />
+            <AnchorPane layoutX="26.0" layoutY="24.0" prefHeight="70.0" prefWidth="70.0" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="704.0" AnchorPane.topAnchor="24.0" />
          </children></AnchorPane>
-      <ImageView fx:id="Gun" fitHeight="150.0" fitWidth="200.0" layoutX="300.0" layoutY="320.0" pickOnBounds="true" rotate="180.0">
-         <image>
-            <Image url="@../Image/8ogch83.png" />
-         </image></ImageView>
    </children>
 </AnchorPane>

@@ -2,6 +2,7 @@ package sample;
 
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -19,13 +20,13 @@ public class Controller {
 
 //Окно отрисовки объектов
 @FXML
-private Canvas cBasic;
+private Canvas GameCanvas;
+
+@FXML
+private Canvas GamePanelCanvas;
 
 @FXML
 private AnchorPane APMenu;
-
-@FXML
-private ImageView Gun;
 
 //Инициализация при запуске формы
 @FXML
@@ -38,23 +39,26 @@ public void initialize(){
         AtomicBoolean KeyHold = new AtomicBoolean(false);
 
         //Графический контекст для отрисовки объектов
-        GraphicsContext gcBasic = cBasic.getGraphicsContext2D();
+        GraphicsContext gcBasic = GameCanvas.getGraphicsContext2D();
+
+        //Орудие игрока
+        Model.Gun Player1 = new Model.Gun(150, GameCanvas.getWidth()/4, GameCanvas.getHeight() - 75);
 
         //Прицел игрока
-        Model.Aim aim = new Model.Aim(cBasic.getHeight(), cBasic.getWidth());
+         Model.Aim aim = new Model.Aim(GameCanvas.getHeight(), GameCanvas.getWidth(), Player1);
 
         //Форма отображения набранных цифр
-        Model.EnterToNumber EntNumber = new Model.EnterToNumber(Gun,40,40);
+        Model.EnterToNumber EntNumber = new Model.EnterToNumber(Player1,40,40);
 
         //Описание настроек игры
-        Model.GameOptions Game = new Model.GameOptions(1, 1);
+        Model.GameOptions Game = new Model.GameOptions(1, 10);
 
         //Создание списка метеоритов
         ArrayList<Model.Meteor> MeteorList = new ArrayList<>();
 
 
         for (int i = 0; i < Game.MeteorsCount; i++)
-            MeteorList.add(new Model.Meteor("Image/Asteroid.png", cBasic.getHeight(), cBasic.getWidth(), new Model().setID(MeteorList)));
+            MeteorList.add(new Model.Meteor(GameCanvas.getHeight(), GameCanvas.getWidth(), new Model().setID(MeteorList)));
 
         //Создание списка пуль
         ArrayList<Model.Projectile> ProjectileList = new ArrayList<>();
@@ -93,10 +97,8 @@ public void initialize(){
 
         );
 
-        //ArrayList<Method.Sprite> Bullet = new ArrayList<Method.Sprite>();
-
         //Поток анимации объектов
-        AnimationTimer gameLoop = new AnimationTimer(){
+        AnimationTimer GameLoop = new AnimationTimer(){
             @Override
             public void handle(long nanotime){
 
@@ -124,23 +126,38 @@ public void initialize(){
 
                 //Действие при вводе буквы
                 if (new Model().IndexRusEng(KeyList) != -1){
-                    if (aim.TargetMeteor != null && aim.TargetCaught)
-                        ProjectileList.add(new Model.Projectile(Gun.getLayoutX()+Gun.getFitWidth()/2,Gun.getLayoutY(),
-                                KeyList.get(0).toCharArray()[0], cBasic.getHeight(), cBasic.getWidth(),
-                                MeteorList.get(aim.NumberToMeteor)));
+                    if (aim.TargetMeteor != null && aim.TargetCaught && !aim.TargetMeteor.overlaps(Player1))
+                        ProjectileList.add(new Model.Projectile(
+                                Player1, KeyList.get(0).toCharArray()[0],
+                                GameCanvas.getHeight(), GameCanvas.getWidth(), aim.TargetMeteor));
                     KeyList.remove(new Model().IndexRusEng(KeyList));
                 }
 
+                for (Model.Meteor Meteor : MeteorList) {
+                    if (Meteor.Fall) Game.Life--;
+                    if (Meteor.Text.Destroy) Game.Score += 500 * Game.Difficulty;
+                }
+
+                /*
+                if (Game.Life < 1) {
+                    System.out.println("End Game");
+                    System.out.println(Game.Score);
+                    super.stop();
+                }
+                 */
+
                 //Удаление уничтоженных метеоритов
+                MeteorList.removeIf(Meteor -> Meteor.Fall);
                 MeteorList.removeIf(Meteor -> Meteor.Text.Destroy);
 
                 //Удаление снарядов
                 ProjectileList.removeIf(projectile -> projectile.Destroy);
 
                 //Очитска формы
-                gcBasic.clearRect(0,0, cBasic.getWidth(), cBasic.getHeight());
+                gcBasic.clearRect(0,0, GameCanvas.getWidth(), GameCanvas.getHeight());
 
-
+                //Обновление орудия
+                Player1.update(deltaTime);
 
                 //Обновление списка метеоритов
                 for (Model.Meteor Meteor : MeteorList)
@@ -152,6 +169,9 @@ public void initialize(){
 
                 //Обновление прицела
                 aim.update(deltaTime);
+
+                //Отрисовка орудия
+                Player1.render(gcBasic);
 
                 //Отрисовка списка метеоритов
                 for (Model.Meteor Meteor : MeteorList)
@@ -165,11 +185,25 @@ public void initialize(){
                 aim.render(gcBasic);
                 EntNumber.render(gcBasic);
 
+                if (aim.TargetMeteor != null) {
+                    Point2D vector =
+                            new Point2D(Player1.position.x - aim.position.x, Player1.position.y - aim.position.y);
+                    double angle = vector.angle(1, 0);
+                    if (vector.getY() > 0)
+                        Player1.rotation = angle + 180;
+                }
             }
         };
 
-        gameLoop.start();
+    AnimationTimer PanelLoop = new AnimationTimer() {
+        @Override
+        public void handle(long nanotime) {
 
+        }
+    };
+
+        GameLoop.start();
+        PanelLoop.start();
 
     }
 }
