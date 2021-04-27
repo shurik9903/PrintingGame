@@ -16,7 +16,6 @@
       <Canvas fx:id="GameCanvas" height="470.0" width="800.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <AnchorPane layoutY="470.0" prefHeight="130.0" prefWidth="800.0" style="-fx-background-color: Yellow;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="470.0">
          <children>
-            <Canvas fx:id="GamePanelCanvas" height="130.0" layoutX="2.0" layoutY="1.0" width="800.0" />
             <ImageView fitHeight="148.0" fitWidth="148.0" layoutX="326.0" pickOnBounds="true">
                <image>
                   <Image url="@../Image/stock_draw-sphere.png" />
@@ -24,6 +23,7 @@
             <AnchorPane layoutX="111.0" layoutY="65.0" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: Black;" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="111.0" AnchorPane.rightAnchor="489.0" AnchorPane.topAnchor="65.0" />
             <AnchorPane layoutX="111.0" layoutY="14.0" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: Black;" AnchorPane.bottomAnchor="81.0" AnchorPane.leftAnchor="111.0" AnchorPane.rightAnchor="489.0" AnchorPane.topAnchor="14.0" />
             <AnchorPane layoutX="26.0" layoutY="24.0" prefHeight="70.0" prefWidth="70.0" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="704.0" AnchorPane.topAnchor="24.0" />
+            <Canvas fx:id="GamePanelCanvas" height="130.0" layoutX="2.0" layoutY="1.0" width="800.0" />
          </children></AnchorPane>
    </children>
 </AnchorPane>

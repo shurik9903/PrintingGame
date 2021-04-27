@@ -5,16 +5,13 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import sample.Model.*;
 
 public class Controller {
 
@@ -38,34 +35,37 @@ public void initialize(){
         //Проверка на зажатие кнопки
         AtomicBoolean KeyHold = new AtomicBoolean(false);
 
-        //Графический контекст для отрисовки объектов
-        GraphicsContext gcBasic = GameCanvas.getGraphicsContext2D();
+        //Графический контекста для отрисовки объектов
+        GraphicsContext GCGame = GameCanvas.getGraphicsContext2D();
+        GraphicsContext GPCGame = GamePanelCanvas.getGraphicsContext2D();
 
         //Орудие игрока
-        Model.Gun Player1 = new Model.Gun(150, GameCanvas.getWidth()/4, GameCanvas.getHeight() - 75);
+        Gun Player1 = new Gun(150, GameCanvas.getWidth()/4, GameCanvas.getHeight() - 75);
 
         //Прицел игрока
-         Model.Aim aim = new Model.Aim(GameCanvas.getHeight(), GameCanvas.getWidth(), Player1);
+         Aim aim = new Aim(GameCanvas.getHeight(), GameCanvas.getWidth(), Player1);
 
         //Форма отображения набранных цифр
-        Model.EnterToNumber EntNumber = new Model.EnterToNumber(Player1,40,40);
+        EnterToNumber EntNumber = new EnterToNumber(Player1,40,40);
 
         //Описание настроек игры
-        Model.GameOptions Game = new Model.GameOptions(1, 10);
+        GameOptions Game = new GameOptions(1, 10);
 
         //Создание списка метеоритов
-        ArrayList<Model.Meteor> MeteorList = new ArrayList<>();
+        ArrayList<Meteor> MeteorList = new ArrayList<>();
 
+        Gif im = new Gif("Aim", 40);
+        im.setCoordinate(100,100);
 
         for (int i = 0; i < Game.MeteorsCount; i++)
-            MeteorList.add(new Model.Meteor(GameCanvas.getHeight(), GameCanvas.getWidth(), new Model().setID(MeteorList)));
+            MeteorList.add(new Meteor(GameCanvas.getHeight(), GameCanvas.getWidth(), new Model().setID(MeteorList)));
 
         //Создание списка пуль
-        ArrayList<Model.Projectile> ProjectileList = new ArrayList<>();
+        ArrayList<Projectile> ProjectileList = new ArrayList<>();
 
         //Список нажатых клавишь
         ArrayList<String> KeyList = new ArrayList<>();
-        ArrayList<String> NumberToTarget = new ArrayList<>();
+
         //Добавление действий на форму | Действие при нажатие клавиши
         APMenu.setOnKeyPressed(
                 (KeyEvent e) ->{
@@ -92,10 +92,7 @@ public void initialize(){
         );
 
         //Добавление действий на форму | Действие при отпускание клавиши
-        APMenu.setOnKeyReleased(
-                (KeyEvent e) -> KeyHold.set(false)
-
-        );
+        APMenu.setOnKeyReleased((KeyEvent e) -> KeyHold.set(false));
 
         //Поток анимации объектов
         AnimationTimer GameLoop = new AnimationTimer(){
@@ -127,13 +124,13 @@ public void initialize(){
                 //Действие при вводе буквы
                 if (new Model().IndexRusEng(KeyList) != -1){
                     if (aim.TargetMeteor != null && aim.TargetCaught && !aim.TargetMeteor.overlaps(Player1))
-                        ProjectileList.add(new Model.Projectile(
+                        ProjectileList.add(new Projectile(
                                 Player1, KeyList.get(0).toCharArray()[0],
                                 GameCanvas.getHeight(), GameCanvas.getWidth(), aim.TargetMeteor));
                     KeyList.remove(new Model().IndexRusEng(KeyList));
                 }
 
-                for (Model.Meteor Meteor : MeteorList) {
+                for (Meteor Meteor : MeteorList) {
                     if (Meteor.Fall) Game.Life--;
                     if (Meteor.Text.Destroy) Game.Score += 500 * Game.Difficulty;
                 }
@@ -154,38 +151,39 @@ public void initialize(){
                 ProjectileList.removeIf(projectile -> projectile.Destroy);
 
                 //Очитска формы
-                gcBasic.clearRect(0,0, GameCanvas.getWidth(), GameCanvas.getHeight());
+                GCGame.clearRect(0,0, GCGame.getCanvas().getWidth(), GCGame.getCanvas().getHeight());
 
                 //Обновление орудия
                 Player1.update(deltaTime);
 
                 //Обновление списка метеоритов
-                for (Model.Meteor Meteor : MeteorList)
+                for (Meteor Meteor : MeteorList)
                     Meteor.update(deltaTime);
 
                 //Обновление списка снарядов
-                for (Model.Projectile projectile : ProjectileList)
+                for (Projectile projectile : ProjectileList)
                     projectile.update(deltaTime);
 
                 //Обновление прицела
                 aim.update(deltaTime);
 
                 //Отрисовка орудия
-                Player1.render(gcBasic);
+                Player1.render(GCGame);
 
                 //Отрисовка списка метеоритов
-                for (Model.Meteor Meteor : MeteorList)
-                    Meteor.render(gcBasic);
+                for (Meteor Meteor : MeteorList)
+                    Meteor.render(GCGame);
 
                 //Отрисовка списка снарядов
-                for (Model.Projectile projectile : ProjectileList)
-                    projectile.render(gcBasic);
+                for (Projectile projectile : ProjectileList)
+                    projectile.render(GCGame);
 
                 //Отрисовка прицела
-                aim.render(gcBasic);
-                EntNumber.render(gcBasic);
+                aim.render(GCGame);
+                EntNumber.render(GCGame);
 
                 if (aim.TargetMeteor != null) {
+
                     Point2D vector =
                             new Point2D(Player1.position.x - aim.position.x, Player1.position.y - aim.position.y);
                     double angle = vector.angle(1, 0);
@@ -195,9 +193,15 @@ public void initialize(){
             }
         };
 
+
+
     AnimationTimer PanelLoop = new AnimationTimer() {
         @Override
         public void handle(long nanotime) {
+
+            GPCGame.clearRect(0,0, GPCGame.getCanvas().getWidth(), GPCGame.getCanvas().getHeight());
+
+            im.render(GPCGame, deltaTime);
 
         }
     };
