@@ -1,6 +1,4 @@
-package sample.Model;
-
-
+package sample.Server.Model;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -11,8 +9,9 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Stream;
 
-public class Model {
+public class MyFunction {
 
+    //Назначение свободного уникльного ID для метеоритов
     public int setID(ArrayList<Meteor> meteors) {
 
         if (meteors.size() == 0) return 1;
@@ -53,6 +52,7 @@ public class Model {
         return "";
     }
 
+    //Конвертирование анг. текста в рус.; получение индекса буквы
     public int IndexRusEng(ArrayList<String> arr) {
 
         ArrayList<Character> rus = new ArrayList<>(
@@ -77,12 +77,13 @@ public class Model {
 
     }
 
+    //Получение индекса цифры
     public int IndexNumber(ArrayList<String> arr) {
         ArrayList<Character> num = new ArrayList<>(
                 Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
 
         for (Character i : num)
-            if (arr.contains(i.toString()))
+            if (arr != null && arr.contains(i.toString()))
                 return arr.indexOf(i.toString());
 
         return -1;
@@ -94,9 +95,7 @@ public class Model {
             return lines.skip(getRandomNumber(0, 10392)).findFirst().get();
         } catch (IOException e) {
             e.printStackTrace();
+            return "";
         }
-        return "";
-
     }
 }
-

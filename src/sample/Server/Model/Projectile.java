@@ -1,4 +1,4 @@
-package sample.Model;
+package sample.Server.Model;
 
 import javafx.geometry.Point2D;
 
@@ -6,13 +6,14 @@ import javafx.geometry.Point2D;
 public class Projectile extends Sprite {
 
     private final Meteor meteor;
-    private boolean Miss;
+    public boolean Miss;
     public boolean Destroy;
     private final char Letter;
     double BoxHeight, BoxWidth;
-    private final Gun Player;
+    private final Player Player;
 
-    public Projectile(Gun Player, char Letter, double BoxHeight, double BoxWidth, Meteor meteor) {
+    //Конструктор
+    public Projectile(Player Player, char Letter, double BoxHeight, double BoxWidth, Meteor meteor) {
         super("Image/bullet.png", 25);
         this.Player = Player;
         Position();
@@ -26,6 +27,7 @@ public class Projectile extends Sprite {
         this.BoxWidth = BoxWidth;
     }
 
+    //Расчет следующей позиции
     private void Position() {
         double L = Player.image.getHeight() / 2;
         double angleRadian = Math.toRadians(Player.rotation);
@@ -33,6 +35,7 @@ public class Projectile extends Sprite {
         position.y = Player.position.y + L * Math.sin(angleRadian);
     }
 
+    //Движение к метеориту, проверка на попадание и выход за границу игры
     private void MoveAndFireToTarget() {
         if (meteor == null) return;
         if (overlaps(meteor) && !Miss)
@@ -49,6 +52,7 @@ public class Projectile extends Sprite {
         }
     }
 
+    //Получение угла поворота снаряда
     @Override
     public double getAngleToTarget(Sprite other) {
         Point2D vector =

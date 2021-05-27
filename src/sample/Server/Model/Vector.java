@@ -1,10 +1,11 @@
-package sample.Model;
+package sample.Server.Model;
 
 //Класс вектор: Расположение, направление, скорость движения
 public class Vector {
 
     public double x, y;
 
+    //конструктор
     public Vector() {
         this.set(0, 0);
     }
@@ -13,22 +14,25 @@ public class Vector {
         this.set(x, y);
     }
 
+    //установка координат
     public void set(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
+    //смещение координат путем сложения
     public void add(double x, double y) {
         this.x += x;
         this.y += y;
     }
 
+    //смещение координат путем произведения
     public void multiply(double m) {
         this.x *= m;
         this.y *= m;
     }
 
-
+    //Получение длины
     public double getLength() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
@@ -49,6 +53,7 @@ public class Vector {
         }
     }
 
+    //получение угла объекта
     public double getAngle() {
         if (this.getLength() == 0)
             return 0;

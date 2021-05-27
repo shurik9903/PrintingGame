@@ -1,4 +1,4 @@
-package sample.Model;
+package sample.Server.Model;
 
 import java.util.ArrayList;
 
@@ -9,19 +9,21 @@ public class Aim extends Sprite {
     public Meteor TargetMeteor;
     int NumberToMeteor;
     public boolean TargetCaught;
-    private final Gun Player;
+    double RestrictedArea;
 
-    public Aim(double BoxHeight, double BoxWidth, Gun Player) {
+    //Конструктор класса
+    public Aim(double BoxWidth, double BoxHeight, double RestrictedArea) {
         super("Image/Aim.png", 100);
         this.BoxWidth = BoxWidth;
         this.BoxHeight = BoxHeight;
         this.boundary.setSize(10, 10);
-        this.Player = Player;
+        this.RestrictedArea = RestrictedArea;
         TargetMeteor = null;
         NumberToMeteor = -1;
         TargetCaught = false;
         position.set(this.BoxWidth / 2, this.BoxHeight / 2);
         velocity.setLength(0);
+
     }
 
     //Нацеливание на метеорит из спика
@@ -48,6 +50,7 @@ public class Aim extends Sprite {
         TargetMeteor = meteor.get(NumberToMeteor);
     }
 
+    //Нацеливание на метеорит c указанным номером
     public void AimToMeteor(ArrayList<Meteor> meteor, int Numb) {
         TargetCaught = false;
         if (meteor.size() == 0) {
@@ -70,7 +73,7 @@ public class Aim extends Sprite {
     //Движение к нацеленному метеориту
     public void MoveToTarget() {
 
-        if (TargetMeteor.Text.Destroy || TargetMeteor.position.y >= Player.position.y) {
+        if (TargetMeteor.Text.Destroy || TargetMeteor.position.y >= RestrictedArea) {
             TargetCaught = false;
             TargetMeteor = null;
             return;

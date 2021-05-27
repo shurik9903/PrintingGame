@@ -1,11 +1,11 @@
-package sample.Model;
+package sample.Server.Model;
 
 //Класс прямоугольник: Служит коллизией(точка соприкосновения) объектов
 public class Rectangle {
     double x, y;
     double width, height;
 
-
+    //конструктор
     public Rectangle() {
         setPosition(0, 0);
         setSize(0, 0);
@@ -16,11 +16,13 @@ public class Rectangle {
         setSize(width, height);
     }
 
+    //установка позиции
     public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
+    //установка размера
     public void setSize(double width, double height) {
         this.width = width;
         this.height = height;

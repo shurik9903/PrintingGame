@@ -1,8 +1,7 @@
-package sample.Model;
+package sample.Server.Model;
 
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
+
 
 //Класс обекта: Содержит описание объекта
 public class Sprite {
@@ -11,8 +10,9 @@ public class Sprite {
     public Vector velocity;
     public double rotation;
     public Rectangle boundary;
-    public Image image;
+    public ImageDate image;
 
+    //конуструктор
     public Sprite() {
         this.position = new Vector();
         this.velocity = new Vector();
@@ -35,18 +35,20 @@ public class Sprite {
         setImage(fileImageName, Width, Height);
     }
 
+    //установка изображения
     public void setImage(String fileImageName, double sizeImage) {
-        this.image = new Image(fileImageName, sizeImage, sizeImage, false, false);
+        this.image = new ImageDate(fileImageName, sizeImage, sizeImage);
     }
 
     public void setImage(String fileImageName, double Width, double Height) {
-        this.image = new Image(fileImageName, Width, Height, false, false);
+        this.image = new ImageDate(fileImageName, Width, Height);
     }
 
     public void setImage(String fileImageName) {
-        this.image = new Image(fileImageName);
+        this.image = new ImageDate(fileImageName);
     }
 
+    //Перемещение колизии объекта
     public Rectangle getBoundary() {
         this.boundary.setPosition(this.position.x, this.position.y);
         return this.boundary;
@@ -59,23 +61,10 @@ public class Sprite {
 
     //Обновление объекта
     public void update(double deltaTime) {
-
         this.position.add(this.velocity.x * deltaTime, this.velocity.y * deltaTime);
     }
 
-    //Отрисовка обекта на экране
-    public void render(GraphicsContext gc) {
-
-        gc.save();
-
-        gc.translate(this.position.x, this.position.y);
-        gc.rotate(this.rotation);
-        gc.translate(-this.image.getWidth() / 2, -this.image.getHeight() / 2);
-        gc.drawImage(this.image, 0, 0);
-
-        gc.restore();
-    }
-
+    //Получение угла поворота до объекта
     public double getAngleToTarget(Sprite other) {
         Point2D vector =
                 new Point2D(other.position.x - position.x, other.position.y - position.y);

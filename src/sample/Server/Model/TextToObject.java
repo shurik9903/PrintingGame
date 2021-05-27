@@ -1,7 +1,8 @@
-package sample.Model;
+package sample.Server.Model;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import sample.GameData;
 
 import java.util.ArrayList;
 
@@ -13,10 +14,11 @@ public class TextToObject {
     public double x, y;
     public double Width, Height;
     public String Text;
-    public ArrayList<Image> FrameImage, FrameNumber;
+    public ArrayList<ImageDate> FrameImage, FrameNumber;
     public ArrayList<ArrayList<MyImage>> FrameText;
     private final int MeteorID;
 
+    //конструктор
     public TextToObject(double x, double y, double Width, double Height, String Text, int ID) {
         this.Text = Text;
         this.Width = Width;
@@ -38,9 +40,9 @@ public class TextToObject {
     //Описание формы и текста
     public void CreateFrame() {
 
-        Image FStart = new Image("Image/R1.png", this.Width, this.Height, false, false);
-        Image FEnd = new Image("Image/R3.png", this.Width, this.Height, false, false);
-        Image FMiddle = new Image("Image/R2.png", this.Width, this.Height, false, false);
+        ImageDate FStart = new ImageDate("Image/R1.png", this.Width, this.Height);
+        ImageDate FEnd = new ImageDate("Image/R3.png", this.Width, this.Height);
+        ImageDate FMiddle = new ImageDate("Image/R2.png", this.Width, this.Height);
 
         this.FrameImage = new ArrayList<>();
         this.FrameImage.add(FStart);
@@ -51,15 +53,15 @@ public class TextToObject {
 
         FrameNumber = new ArrayList<>();
         for (Character i : String.valueOf(MeteorID).toCharArray())
-            FrameNumber.add(new Image("Image/NumberImage/" + i + ".png", this.Width, this.Height, false, false));
+            FrameNumber.add(new ImageDate("Image/NumberImage/" + i + ".png", this.Width, this.Height));
 
         this.FrameText = new ArrayList<>();
         for (Character i : this.Text.toCharArray()) {
             this.FrameText.add(new ArrayList<MyImage>());
             FrameText.get(FrameText.size() - 1).add(new MyImage("Image/TextImage/" + i + "unbroken.png",
-                    this.Width, this.Height, false, false, i.toString(), false));
+                    this.Width, this.Height, i.toString(), false));
             FrameText.get(FrameText.size() - 1).add(new MyImage("Image/TextImage/" + i + "broken.png",
-                    this.Width, this.Height, false, false, i.toString(), true));
+                    this.Width, this.Height, i.toString(), true));
 
 
         }
@@ -83,33 +85,6 @@ public class TextToObject {
                 return false;
         }
         return false;
-    }
-
-    //Отрисовка объекта
-    public void render(GraphicsContext gc) {
-        gc.save();
-
-        int TextCount = 0;
-        int NumberCount = 0;
-
-        gc.translate(this.x, this.y);
-
-        for (Image i : this.FrameImage) {
-            gc.translate(+this.Width, 0);
-            gc.drawImage(i, 0, 0);
-
-            if (NumberCount < FrameNumber.size()) {
-                gc.drawImage(this.FrameNumber.get(NumberCount), 0, 0);
-                NumberCount++;
-            } else {
-                if (TextCount < Text.length()) {
-                    gc.drawImage(this.FrameText.get(TextCount).get(0), 0, 0);
-                    TextCount++;
-                }
-            }
-        }
-
-        gc.restore();
     }
 
 }
