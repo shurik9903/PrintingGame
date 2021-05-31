@@ -1,5 +1,7 @@
 package sample.Server.Model.MyImage;
 
+import javafx.scene.image.Image;
+
 public interface IMyImage {
 
     void setName(String ImageName);
@@ -12,4 +14,6 @@ public interface IMyImage {
 
     //Получить тип
     boolean getType();
+
+    Image getImage();
 }

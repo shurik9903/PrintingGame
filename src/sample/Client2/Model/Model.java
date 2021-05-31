@@ -1,9 +1,11 @@
 package sample.Client2.Model;
 
-import sample.Client2.Model.Gif;
-import sample.Client2.Model.ServerThread;
-import sample.GameData;
-import sample.UserData;
+import sample.Client2.Model.ClientFactory.ClientFactory;
+import sample.Client2.Model.Gif.IGif;
+import sample.Client2.Model.IModel;
+import sample.Client2.Model.ServerThread.IServerThread;
+import sample.Data.DataInterface.*;
+import sample.Data.UserData;
 
 import java.net.Socket;
 import javafx.animation.AnimationTimer;
@@ -19,12 +21,13 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class Model {
-    GameData GD = new GameData();
-    ServerThread server = null;
+public class Model implements IModel {
+    IGameData GD = ClientFactory.GameDataCreateInstance();
+    IServerThread server = null;
     public Model() {
     }
 
+    @Override
     public void Initialize(GraphicsContext GameCanvas, GraphicsContext GamePanelCanvas, AnchorPane APMenu, HBox HBScore, HBox HBEnergy) {
 
         int Score = 0, OldScore = 0;
@@ -40,14 +43,14 @@ public class Model {
         GraphicsContext GPCGame = GamePanelCanvas;
 
         //Создание списка Gif изображений энергии
-        ArrayList<Gif> EnergyGifList = new ArrayList<>();
+        ArrayList<IGif> EnergyGifList = new ArrayList<>();
 
         for (Node IV : HBEnergy.getChildren())
-            EnergyGifList.add(new Gif("Aim", (ImageView) IV, 2));
+            EnergyGifList.add(ClientFactory.GifCreateInstance("Aim", (ImageView) IV, 2));
 
         //Список нажатых клавишь
         ArrayList<String> KeyList = new ArrayList<>();
-        UserData userData = new UserData("User1", KeyList);
+        IUserData userData = ClientFactory.UserDataCreateInstance("User1", KeyList);
 
 
         try{
@@ -55,7 +58,7 @@ public class Model {
             System.out.println("Local port: " +  s.getLocalPort());
             System.out.println("Remote port: " + s.getPort());
 
-            server = new ServerThread(s, userData);
+            server = ClientFactory.ServerThreadCreateInstance(s, userData);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -97,20 +100,20 @@ public class Model {
                 GCGame.clearRect(0, 0, GCGame.getCanvas().getWidth(), GCGame.getCanvas().getHeight());
 
                 //Отрисовка списка метеоритов
-                for (GameData.MeteorData Meteor : GD.getMeteorList())
+                for (IMeteorData Meteor : GD.getMeteorList())
                     Meteor.render(GCGame);
 
                 //Отрисовка списка снарядов
-                for (GameData.ProjectileData projectile : GD.getProjectileList())
-                    projectile.render(GCGame);
+                for (IProjectileData projectile : GD.getProjectileList())
+                    projectile.getSpriteData().render(GCGame);
 
                 //Отрисовка прицела
                 if (GD.getAim() != null)
-                    for (GameData.AimData aim : GD.getAim())
-                        aim.render(GCGame);
+                    for (IAimData aim : GD.getAim())
+                        aim.getSpriteData().render(GCGame);
 
                 if (GD.getPlayersGun() != null)
-                    for (GameData.SpriteData gun : GD.getPlayersGun())
+                    for (ISpriteData gun : GD.getPlayersGun())
                         gun.render(GCGame);
 
                 if (GD.getEnterToNumberData() != null)
@@ -126,7 +129,7 @@ public class Model {
             public void handle(long nanotime) {
                 GPCGame.clearRect(0, 0, GPCGame.getCanvas().getWidth(), GPCGame.getCanvas().getHeight());
 
-                for (Gif EnergyGif : EnergyGifList)
+                for (IGif EnergyGif : EnergyGifList)
                     EnergyGif.Render(GPCGame);
 
                 DrawScore(Score, OldScore, HBScore);
@@ -140,7 +143,7 @@ public class Model {
     }
 
 
-
+    @Override
     public void DrawScore(int Score, int OldScore, HBox HBScore){
         if (OldScore != Score) {
             System.out.println("Score: " + Score);
@@ -157,6 +160,7 @@ public class Model {
     }
 
     //Функиця перевода английских букв в русские
+    @Override
     public String RusText(Character c) {
 
         c = Character.toLowerCase(c);
@@ -178,6 +182,7 @@ public class Model {
     }
 
     //Конвертирование анг. текста в рус.; получение индекса буквы
+    @Override
     public int IndexRusEng(ArrayList<String> arr) {
 
         ArrayList<Character> rus = new ArrayList<>(
@@ -203,6 +208,7 @@ public class Model {
     }
 
     //Получение индекса цифры
+    @Override
     public int IndexNumber(ArrayList<String> arr) {
         ArrayList<Character> num = new ArrayList<>(
                 Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));

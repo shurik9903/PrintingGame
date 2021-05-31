@@ -6,9 +6,13 @@ import sample.Server.Model.ImageDate.IImageDate;
 import sample.Server.Model.ImageDate.ImageDate;
 import sample.Server.Model.ServerFactory.ServerFactory;
 
-//Класс изображение: дополнение наследуемого класса Image
-public class MyImage implements IMyImage, IImageDate {
+import java.io.Serial;
+import java.io.Serializable;
 
+//Класс изображение: дополнение наследуемого класса Image
+public class MyImage implements IMyImage, IImageDate, Serializable {
+    @Serial
+    private static final long serialVersionUID = 6529685098267757693L;
     protected String ImageName;
     protected IImageDate imageDate;
     protected boolean Type;

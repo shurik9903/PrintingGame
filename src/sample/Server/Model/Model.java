@@ -1,21 +1,21 @@
 package sample.Server.Model;
 
 import javafx.geometry.Point2D;
-import sample.GameData;
-import sample.Server.Model.GameOptions.GameOptions;
-import sample.Server.Model.Meteor.Meteor;
-import sample.Server.Model.MyFunction.MyFunction;
-import sample.Server.Model.Player.Player;
-import sample.Server.Model.Projectile.Projectile;
-import sample.Server.Model.UserConnect.UserConnect;
-
+import sample.Data.DataInterface.*;
+import sample.Server.Model.GameOptions.IGameOptions;
+import sample.Server.Model.Meteor.IMeteor;
+import sample.Server.Model.Player.IPlayer;
+import sample.Server.Model.Projectile.IProjectile;
+import sample.Server.Model.Rectangle.IRectangle;
+import sample.Server.Model.ServerFactory.ServerFactory;
+import sample.Server.Model.UserConnect.IUserConnect;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Model {
+public class Model implements IModel {
 
-    private final ArrayList<UserConnect> Users;
+    private final ArrayList<IUserConnect> Users;
 
     public Model(){
         Initialize();
@@ -33,7 +33,7 @@ public class Model {
                 NumberToUsers++;
                 System.out.println("Client join");
                 if (NumberToUsers > 0 && NumberToUsers <= 2) {
-                    Users.add(new UserConnect("User" + NumberToUsers, s, this));
+                    Users.add(ServerFactory.UserConnectCreateInstance("User" + NumberToUsers, s, this));
                     System.out.println("Local port: " + s.getLocalPort());
                     System.out.println("Remote port: " + s.getPort());
                 }
@@ -55,35 +55,40 @@ public class Model {
         }
     }
 
-    Player Player1;
-    Player Player2;
-    ArrayList<Player> AllPlayer;
+    IPlayer Player1;
+    IPlayer Player2;
+    ArrayList<IPlayer> AllPlayer;
     double WindowHeight, WindowWidth;
-    GameOptions Game;
+    IGameOptions Game;
     Thread GameLoop;
 
-    public Player setPlayer1() {
-        Player1 = new Player(150, WindowWidth/6, WindowHeight - 100);
+    @Override
+    public IPlayer setPlayer1() {
+        Player1 = ServerFactory.PlayerCreateInstance(150, WindowWidth/6, WindowHeight - 100);
         AllPlayer.add(Player1);
         return Player1;
     }
 
-    public Player setPlayer2() {
-        Player2 = new Player(150, WindowWidth-WindowWidth/6, WindowHeight - 100);
+    @Override
+    public IPlayer setPlayer2() {
+        Player2 = ServerFactory.PlayerCreateInstance(150, WindowWidth-WindowWidth/6, WindowHeight - 100);
         AllPlayer.add(Player2);
         return Player2;
     }
 
+    @Override
     public void DisconnectPlayer1(){
         AllPlayer.remove(Player1);
         Player1 = null;
     }
 
+    @Override
     public void DisconnectPlayer2(){
         AllPlayer.remove(Player2);
         Player2 = null;
     }
 
+    @Override
     public void Initialize() {
 
         AllPlayer = new ArrayList<>();
@@ -95,10 +100,10 @@ public class Model {
         double deltaTime = 1. / 24;
 
         //Описание настроек игры
-        Game = new GameOptions(1, 3, WindowWidth, WindowHeight);
+        Game = ServerFactory.GameOptionsCreateInstance(1, 3, WindowWidth, WindowHeight);
 
         //Создание списка метеоритов
-        ArrayList<Meteor> MeteorList = new ArrayList<>();
+        ArrayList<IMeteor> MeteorList = new ArrayList<>();
 
         //Поток обработки объектов
         GameLoop = new Thread(() -> {
@@ -106,15 +111,15 @@ public class Model {
 
 
                 Game.GameProcess(MeteorList);
-                if (Game.Life < 1 || (Game.MeteorsSpawn >= Game.MeteorsCount && MeteorList.isEmpty())) {
-                    Game.GameStop = true;
+                if (Game.getLife() < 1 || (Game.getMeteorsSpawn() >= Game.getMeteorsCount() && MeteorList.isEmpty())) {
+                    Game.setGameStop(true);
                 }
 
-                for (Player player : AllPlayer) {
+                for (IPlayer player : AllPlayer) {
 
-                    if (new MyFunction().IndexNumber(player.getKeyList()) != -1) {
+                    if (ServerFactory.MyFunctionCreateInstance().IndexNumber(player.getKeyList()) != -1) {
                         player.getEnterNumber().addNumber(player.getKeyList().get(0).toCharArray()[0]);
-                        player.getKeyList().remove(new MyFunction().IndexNumber(player.getKeyList()));
+                        player.getKeyList().remove(ServerFactory.MyFunctionCreateInstance().IndexNumber(player.getKeyList()));
                     }
 
                     //Действие при нажатии правого альта
@@ -135,86 +140,89 @@ public class Model {
                     }
 
                     //Действие при вводе буквы
-                    if (new MyFunction().IndexRusEng(player.getKeyList()) != -1) {
-                        if (player.getPlayerAim().TargetMeteor != null &&
-                                player.getPlayerAim().TargetCaught &&
-                                !player.getPlayerAim().TargetMeteor.overlaps(player) && player.getEnergy() != 0) {
-                            player.getProjectileList().add(new Projectile(
+                    if (ServerFactory.MyFunctionCreateInstance().IndexRusEng(player.getKeyList()) != -1) {
+                        if (player.getPlayerAim().getTargetMeteor() != null &&
+                                player.getPlayerAim().getTargetCaught() &&
+                                !player.getPlayerAim().getTargetMeteor().getBasic().overlaps((IRectangle) player) && player.getEnergy() != 0) {
+                            player.getProjectileList().add(ServerFactory.ProjectileCreateInstance(
                                     player, player.getKeyList().get(0).toCharArray()[0],
-                                    WindowHeight, WindowWidth, player.getPlayerAim().TargetMeteor));
+                                    WindowHeight, WindowWidth, player.getPlayerAim().getTargetMeteor()));
                             player.SubEnergy();
                         }
-                        player.getKeyList().remove(new MyFunction().IndexRusEng(player.getKeyList()));
+                        player.getKeyList().remove(ServerFactory.MyFunctionCreateInstance().IndexRusEng(player.getKeyList()));
                     }
 
                     //Убавление энергии пушки
-                    for (Projectile projectile : player.getProjectileList())
-                        if (!projectile.Miss && projectile.Destroy)
+                    for (IProjectile projectile : player.getProjectileList())
+                        if (!projectile.isMiss() && projectile.isDestroy())
                             player.AddEnergy();
 
                 }
 
                 //Проверка условий игры
-                for (Meteor Meteor : MeteorList) {
-                    if (Meteor.Fall) Game.Life--;
-                    if (Meteor.Text.Destroy) Game.Score += (int) (500 * Game.Difficulty + Meteor.velocity.x);
+                for (IMeteor Meteor : MeteorList) {
+                    if (Meteor.isFall()) Game.setLife(Game.getLife()-1);
+                    if (Meteor.getTextObject().isDestroy()) Game.setScore(Game.getScore() + ((int) (500 * Game.getDifficulty() + Meteor.getBasic().getVelocity().getX()))); ;
                 }
 
                 //Удаление уничтоженных метеоритов
-                MeteorList.removeIf(Meteor -> Meteor.Fall);
-                MeteorList.removeIf(Meteor -> Meteor.Text.Destroy);
+                MeteorList.removeIf(IMeteor::isFall);
+                MeteorList.removeIf(IMeteor -> IMeteor.getTextObject().isDestroy());
 
                 //Удаление снарядов
-                for (Player player : AllPlayer) {
-                    player.getProjectileList().removeIf(projectile -> projectile.Destroy);
+                for (IPlayer player : AllPlayer) {
+                    player.getProjectileList().removeIf(IProjectile::isDestroy);
 
-                    for (Projectile projectile : player.getProjectileList())
+                    for (IProjectile projectile : player.getProjectileList())
                         projectile.update(deltaTime);
 
                     //Обновление орудия
-                    player.update(deltaTime);
+                    player.getBasic().update(deltaTime);
                 }
 
                 //Обновление списка метеоритов
-                for (Meteor Meteor : MeteorList)
+                for (IMeteor Meteor : MeteorList)
                     Meteor.update(deltaTime);
 
 
-                ArrayList<GameData.MeteorData> meteorDataList = new ArrayList<>();
-                for (Meteor meteor : MeteorList)
+                ArrayList<IMeteorData> meteorDataList = new ArrayList<>();
+                for (IMeteor meteor : MeteorList)
                     meteorDataList.add(ConvertMeteorToData(meteor));
 
-                ArrayList<GameData.ProjectileData> projectileData = new ArrayList<>();
-                ArrayList<GameData.SpriteData> GunData = new ArrayList<>();
-                ArrayList<GameData.AimData> aimData = new ArrayList<>();
+                ArrayList<IProjectileData> projectileData = new ArrayList<>();
+                ArrayList<ISpriteData> GunData = new ArrayList<>();
+                ArrayList<IAimData> aimData = new ArrayList<>();
 
-                for (Player player : AllPlayer) {
+                for (IPlayer player : AllPlayer) {
 
                     //Обновление прицела
                     player.getPlayerAim().update(deltaTime);
 
-                    if (player.getPlayerAim().TargetMeteor != null) {
+                    if (player.getPlayerAim().getTargetMeteor() != null) {
 
                         Point2D vector =
-                                new Point2D(player.position.x - player.getPlayerAim().position.x,
-                                        player.position.y - player.getPlayerAim().position.y);
+                                new Point2D(player.getBasic().getPosition().getX() - player.getPlayerAim().getBasic().getPosition().getX(),
+                                        player.getBasic().getPosition().getY() - player.getPlayerAim().getBasic().getPosition().getY());
                         double angle = vector.angle(1, 0);
                         if (vector.getY() > 0)
-                            player.rotation = angle + 180;
+                            player.getBasic().setRotation(angle + 180);
                     }
 
 
-                    for (Projectile projectile : player.getProjectileList())
-                        projectileData.add(new GameData.ProjectileData(projectile.position.x, projectile.position.y,
-                                projectile.rotation, projectile.image));
+                    for (IProjectile projectile : player.getProjectileList())
+                        projectileData.add(ServerFactory.ProjectileDataCreateInstance(projectile.getBasic().getPosition().getX(), projectile.getBasic().getPosition().getY(),
+                                projectile.getBasic().getRotation(), projectile.getBasic().getImage()));
 
-                    GunData.add(new GameData.SpriteData(player.position.x, player.position.y, player.rotation, player.image));
-                    aimData.add(new GameData.AimData(player.getPlayerAim().position.x, player.getPlayerAim().position.y, player.getPlayerAim().rotation, player.getPlayerAim().image));
+
+                    GunData.add(ServerFactory.SpriteDataCreateInstance(player.getBasic().getPosition().getX(),
+                            player.getBasic().getPosition().getY(), player.getBasic().getRotation(), player.getBasic().getImage()));
+                    aimData.add(ServerFactory.AimDataCreateInstance(player.getPlayerAim().getBasic().getPosition().getX(), player.getPlayerAim().getBasic().getPosition().getY(),
+                            player.getPlayerAim().getBasic().getRotation(), player.getPlayerAim().getBasic().getImage()));
                 }
 
-                for (Player player : AllPlayer) {
-                    GameData.EnterToNumberData enterToNumberData = new GameData.EnterToNumberData(player.getEnterNumber().x, player.getEnterNumber().y, player.getEnterNumber().Width, player.getEnterNumber().FrameNumber);
-                    player.setGameData(new GameData(Game.Score, GunData, Game.GameStop, meteorDataList, projectileData, aimData, enterToNumberData));
+                for (IPlayer player : AllPlayer) {
+                    IEnterToNumberData enterToNumberData = ServerFactory.EnterToNumberDataCreateInstance(player.getEnterNumber().getX(), player.getEnterNumber().getY(), player.getEnterNumber().getWidth(), player.getEnterNumber().getFrameNumber());
+                    player.setGameData(ServerFactory.GameDataCreateInstance(Game.getScore(), GunData, Game.getGameStop(), meteorDataList, projectileData, aimData, enterToNumberData));
 
                 }
 
@@ -227,20 +235,22 @@ public class Model {
         });
     }
 
-
-    public GameData.MeteorData ConvertMeteorToData(Meteor meteor){
-        return new GameData.MeteorData(meteor.position.x, meteor.position.y,
-                meteor.rotation, meteor.image,
-                new GameData.TextData(meteor.Text.x, meteor.Text.y,
-                        meteor.Text.Width, meteor.Text.Height, meteor.Text.Text.length(),
-                        meteor.Text.FrameImage, meteor.Text.FrameNumber, meteor.Text.FrameText));
+    @Override
+    public IMeteorData ConvertMeteorToData(IMeteor meteor){
+        return ServerFactory.MeteorDataCreateInstance(meteor.getBasic().getPosition().getX(), meteor.getBasic().getPosition().getY(),
+                meteor.getBasic().getRotation(), meteor.getBasic().getImage(),
+                ServerFactory.TextDataCreateInstance(meteor.getTextObject().getX(), meteor.getTextObject().getY(),
+                        meteor.getTextObject().getWidth(), meteor.getTextObject().getHeight(), meteor.getTextObject().getText().length(),
+                        meteor.getTextObject().getFrameImage(), meteor.getTextObject().getFrameNumber(), meteor.getTextObject().getFrameText()));
     }
 
+    @Override
     public void StartGame(){
         System.out.println("Start Game");
         GameLoop.start();
     }
 
+    @Override
     public void StopGame(){
         GameLoop.stop();
     }

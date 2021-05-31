@@ -1,5 +1,6 @@
 package sample.Server.Model.Sprite;
 
+import javafx.geometry.Point2D;
 import sample.Server.Model.ImageDate.IImageDate;
 import sample.Server.Model.ImageDate.ImageDate;
 import sample.Server.Model.ServerFactory.ServerFactory;
@@ -65,13 +66,26 @@ public class Sprite implements ISprite{
 
     //Расчет соприкосновение с другим объектом
     @Override
-    public boolean overlaps(Sprite other) {
+    public boolean overlaps(ISprite other) {
         return this.getBoundary().overlaps(other.getBoundary());
     }
 
     @Override
-    public boolean overlaps(Rectangle other) {
+    public boolean overlaps(IRectangle other) {
         return boundary.overlaps(other);
+    }
+
+
+    //Получение угла поворота до объекта
+    @Override
+    public double getAngleToTarget(ISprite other) {
+        Point2D vector = new Point2D(other.getPosition().getX() - getPosition().getX(),
+                        other.getPosition().getY() - getPosition().getY());
+        double angle = vector.angle(1, 0);
+        if (vector.getY() > 0)
+            return angle;
+        else
+            return -angle;
     }
 
     //Обновление объекта

@@ -1,21 +1,22 @@
 package sample.Server.Model.EnterToNumber;
 
+import sample.Server.Model.ImageDate.IImageDate;
 import sample.Server.Model.ImageDate.ImageDate;
+import sample.Server.Model.Player.IPlayer;
 import sample.Server.Model.Player.Player;
 
 import java.util.ArrayList;
 
 //Класс ввод номера: Отображение и ввод номера метеорита
-public class EnterToNumber {
-    public double x;
-    public double y;
-    public final double Width, Height;
+public class EnterToNumber implements IEnterToNumber{
+    private double x,y;
+    private double Width, Height;
     private String Numbers;
-    private final Player player;
-    public ArrayList<ImageDate> FrameNumber;
+    private final IPlayer player;
+    private ArrayList<IImageDate> FrameNumber;
 
     //Конструктор
-    public EnterToNumber(Player player, double Width, double Height) {
+    public EnterToNumber(IPlayer player, double Width, double Height) {
         Numbers = "";
         this.Width = Width;
         this.Height = Height;
@@ -24,6 +25,7 @@ public class EnterToNumber {
     }
 
     //Ввод номера
+    @Override
     public void addNumber(Character c) {
         if (Numbers.length() < 3) Numbers += c;
         else Numbers = "";
@@ -31,6 +33,7 @@ public class EnterToNumber {
     }
 
     //Получение введенного номера
+    @Override
     public int getNumbers() {
         int R = 0;
         if (Numbers.length() != 0)
@@ -41,6 +44,7 @@ public class EnterToNumber {
     }
 
     //Инициализация путем добавление картинок в список
+    @Override
     public void initialize() {
         FrameNumber = new ArrayList<>();
         for (Character i : String.valueOf(Numbers).toCharArray())
@@ -49,12 +53,57 @@ public class EnterToNumber {
     }
 
     //Установка координат формы
+    @Override
     public void setCoordinate() {
-        x = player.position.x - player.image.getWidth() / 2;
-        y = player.position.y + player.image.getHeight() / 2;
+        x = player.getBasic().getPosition().getX() - player.getBasic().getImage().getWidth() / 2;
+        y = player.getBasic().getPosition().getY() + player.getBasic().getImage().getHeight() / 2;
 
     }
 
+    @Override
+    public double getX() {
+        return x;
+    }
+
+    @Override
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    @Override
+    public double getY() {
+        return y;
+    }
+
+    @Override
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    @Override
+    public double getWidth() {
+        return Width;
+    }
+
+    @Override
+    public double getHeight() {
+        return Height;
+    }
+
+    @Override
+    public void setHeight(double height) {
+        Height = height;
+    }
+
+    @Override
+    public void setWidth(double width) {
+        Width = width;
+    }
+
+    @Override
+    public ArrayList<IImageDate> getFrameNumber() {
+        return FrameNumber;
+    }
 }
 
 

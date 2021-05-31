@@ -11,13 +11,13 @@ import java.util.ArrayList;
 //Класс форма с текстом: расположение, длина и текст формы
 public class TextToObject implements ITextToObject{
 
-    public boolean Destroy;
-    int NumberToHits;
-    public double x, y;
-    public double Width, Height;
-    public String Text;
-    public ArrayList<IImageDate> FrameImage, FrameNumber;
-    public ArrayList<ArrayList<IMyImage>> FrameText;
+    private boolean Destroy;
+    private int NumberToHits;
+    private double x, y;
+    private double Width, Height;
+    private String Text;
+    private ArrayList<IImageDate> FrameImage, FrameNumber;
+    private ArrayList<ArrayList<IMyImage>> FrameText;
     private final int MeteorID;
 
     //конструктор
@@ -94,5 +94,70 @@ public class TextToObject implements ITextToObject{
                 return false;
         }
         return false;
+    }
+
+    @Override
+    public String getText(){
+        return Text;
+    }
+
+    @Override
+    public boolean isDestroy() {
+        return Destroy;
+    }
+
+    @Override
+    public double getX() {
+        return x;
+    }
+
+    @Override
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    @Override
+    public double getY() {
+        return y;
+    }
+
+    @Override
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    @Override
+    public double getWidth() {
+        return Width;
+    }
+
+    @Override
+    public double getHeight() {
+        return Height;
+    }
+
+    @Override
+    public void setHeight(double height) {
+        Height = height;
+    }
+
+    @Override
+    public void setWidth(double width) {
+        Width = width;
+    }
+
+    @Override
+    public ArrayList<IImageDate> getFrameImage() {
+        return FrameImage;
+    }
+
+    @Override
+    public ArrayList<IImageDate> getFrameNumber() {
+        return FrameNumber;
+    }
+
+    @Override
+    public ArrayList<ArrayList<IMyImage>> getFrameText() {
+        return FrameText;
     }
 }

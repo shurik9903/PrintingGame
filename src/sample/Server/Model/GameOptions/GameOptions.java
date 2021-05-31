@@ -1,20 +1,24 @@
 package sample.Server.Model.GameOptions;
 
+import sample.Server.Model.Meteor.IMeteor;
 import sample.Server.Model.Meteor.Meteor;
 import sample.Server.Model.MyFunction.MyFunction;
+import sample.Server.Model.ServerFactory.ServerFactory;
 
 import java.util.ArrayList;
 
 //Класс настройки игры: Содержит описание и инициализацию всех игровых объектов
-public class GameOptions{
-    public int Difficulty;
-    public int MeteorsCount, MeteorsSpawn;
-    public double TotalTime;
-    public double Period;
-    public int Score, OldScore;
-    public int Life;
-    public final double GamePanelSizeX, GamePanelSizeY;
-    public boolean GameStop;
+public class GameOptions implements IGameOptions{
+    private final int Difficulty;
+    private final int MeteorsCount;
+    private int MeteorsSpawn;
+    private double TotalTime;
+    private double Period;
+    private int Score;
+    private final int OldScore;
+    private int Life;
+    private final double GamePanelSizeX, GamePanelSizeY;
+    private boolean GameStop;
 
     //Конструктор
     public GameOptions(int Difficulty, int MeteorsCount, double GamePanelSizeX, double GamePanelSizeY){
@@ -31,11 +35,13 @@ public class GameOptions{
         Life = 3;
     }
 
-    private void setPeriod(){
-        Period = new MyFunction().getRandomNumber(7 - Difficulty * 2, 12 - Difficulty * 2);
+    @Override
+    public void setPeriod(){
+        Period = ServerFactory.MyFunctionCreateInstance().getRandomNumber(7 - Difficulty * 2, 12 - Difficulty * 2);
     }
 
-    private boolean MeteorSpawnCheck(){
+    @Override
+    public boolean MeteorSpawnCheck(){
         if (TotalTime > Period) {
             TotalTime = 0;
             setPeriod();
@@ -44,14 +50,58 @@ public class GameOptions{
         return false;
     }
 
-    public void GameProcess(ArrayList<Meteor> MeteorList){
+    @Override
+    public void GameProcess(ArrayList<IMeteor> MeteorList){
         TotalTime += 1./100;
         if (MeteorSpawnCheck() && MeteorsSpawn < MeteorsCount) {
-            MeteorList.add(new Meteor(GamePanelSizeY, GamePanelSizeX, new MyFunction().setID(MeteorList),
-                    new MyFunction().getRandomNumber(Difficulty * 10, 30 + Difficulty * 20)));
+            MeteorList.add(ServerFactory.MeteorCreateInstance(GamePanelSizeY, GamePanelSizeX, ServerFactory.MyFunctionCreateInstance().setID(MeteorList),
+                    ServerFactory.MyFunctionCreateInstance().getRandomNumber(Difficulty * 10, 30 + Difficulty * 20)));
             MeteorsSpawn++;
         }
     }
 
+    @Override
+    public int getLife() {
+        return Life;
+    }
 
+    @Override
+    public void setLife(int Life){
+        this.Life = Life;
+    }
+
+    @Override
+    public void setScore(int Score){
+        this.Score = Score;
+    }
+
+    @Override
+    public int getScore() {
+        return Score;
+    }
+
+    @Override
+    public int getMeteorsCount() {
+        return MeteorsCount;
+    }
+
+    @Override
+    public int getMeteorsSpawn() {
+        return MeteorsSpawn;
+    }
+
+    @Override
+    public boolean getGameStop(){
+        return GameStop;
+    }
+
+    @Override
+    public void setGameStop(boolean GameStop){
+        this.GameStop = GameStop;
+    }
+
+    @Override
+    public int getDifficulty() {
+        return Difficulty;
+    }
 }

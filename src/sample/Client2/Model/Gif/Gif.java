@@ -1,8 +1,9 @@
-package sample.Client.Model;
+package sample.Client2.Model.Gif;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import sample.Client2.Model.Gif.IGif;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.stream.Stream;
 
 //Класс гиф изображений: покадровая смена изображения
-public class Gif{
+public class Gif implements IGif {
     private ArrayList<Image> ArrayImage;
     private double TotalTime;
     private final double Size;
@@ -62,18 +63,21 @@ public class Gif{
     }
 
     //Ввод кординат отображения рисунка
+    @Override
     public void setCoordinate(double x, double y){
         this.x = x;
         this.y = y;
     }
 
     //Ввод поворота рисунка
+    @Override
     public void setRotation(double rotation){
         this.rotation = rotation;
     }
 
     //Загрузка всех изображений из введеной папки в список
-    private void LoadGif(String Name){
+    @Override
+    public void LoadGif(String Name){
         try (Stream<Path> paths = Files.walk(Paths.get("src/Image/GifImage/" + Name))) {
             paths
                     .filter(Files::isRegularFile)
@@ -86,14 +90,16 @@ public class Gif{
     }
 
     //Получение следующего изображения в списке по кругу
-    private Image NextImage(){
+    @Override
+    public Image NextImage(){
         ImageIndex++;
         if (ImageIndex >= ArrayImage.size()) ImageIndex = 0;
         return ArrayImage.get(ImageIndex);
     }
 
     //Проверка на кадры в секунду
-    private boolean CheckFPS(){
+    @Override
+    public boolean CheckFPS(){
         if (TotalTime > 1./FPS) {
             TotalTime = 0;
             return true;
@@ -104,6 +110,7 @@ public class Gif{
 
 
     //Отрисовка изображения
+    @Override
     public void Render(GraphicsContext gc){
         TotalTime += 1./100;
         if (IV == null)
@@ -112,7 +119,8 @@ public class Gif{
             RenderImageView();
     }
 
-    private void RenderImage(GraphicsContext gc){
+    @Override
+    public void RenderImage(GraphicsContext gc){
         gc.save();
         gc.translate(x, y);
         gc.rotate(rotation);
@@ -124,7 +132,8 @@ public class Gif{
         gc.restore();
     }
 
-    private void RenderImageView(){
+    @Override
+    public void RenderImageView(){
         if (CheckFPS())
             IV.setImage(NextImage());
         else

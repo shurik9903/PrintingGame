@@ -108,4 +108,5 @@ public class Vector implements IVector{
     public void setY(double y) {
         this.y = y;
     }
+
 }

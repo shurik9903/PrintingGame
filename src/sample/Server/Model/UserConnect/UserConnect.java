@@ -1,23 +1,26 @@
 package sample.Server.Model.UserConnect;
 
+import sample.Data.DataInterface.IUserData;
+import sample.Server.Model.IModel;
 import sample.Server.Model.Model;
+import sample.Server.Model.Player.IPlayer;
 import sample.Server.Model.Player.Player;
-import sample.UserData;
+import sample.Data.UserData;
 
 import java.io.*;
 import java.net.Socket;
 
-class UserConnect implements Runnable {
+public class UserConnect implements Runnable,IUserConnect {
     private final Thread thread;
     private final Socket SocketUser;
     private InputStream in = null;
     private OutputStream out = null;
-    private UserData userData = null;
-    private Model GameModel;
-    private Player player;
+    private IUserData userData = null;
+    private IModel GameModel;
+    private IPlayer player;
 
 
-    UserConnect(String Name, Socket User, Model GameModel) {
+    public UserConnect(String Name, Socket User, IModel GameModel) {
         this.GameModel = GameModel;
         this.SocketUser = User;
         if (Name.contains("User1"))
@@ -72,7 +75,7 @@ class UserConnect implements Runnable {
                 ByteArrayInputStream bis = new ByteArrayInputStream(bts);
                 ObjectInputStream ois = new ObjectInputStream(bis);
                 Object obj = ois.readObject();
-                userData = (UserData) obj;
+                userData = (IUserData) obj;
 
                 //System.out.println("Access: " + userData.getUserName());
                 //System.out.println("User Key: " + userData.getKeyList());

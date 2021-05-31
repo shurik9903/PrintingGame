@@ -17,17 +17,17 @@ public class Meteor implements IMeteor {
     private boolean Fall = false;
 
     public Meteor(double BoxHeight, double BoxWidth, int ID, int speed) {
-        basic = ServerFactory.SpriteCreateInstance("Image/Asteroid.png", new MyFunction().getRandomNumber(50, 150));
+        basic = ServerFactory.SpriteCreateInstance("Image/Asteroid.png", ServerFactory.MyFunctionCreateInstance().getRandomNumber(50, 150));
         this.BoxHeight = BoxHeight;
         this.BoxWidth = BoxWidth;
-        basic.getPosition().set(new MyFunction().getRandomNumber(-200, (int) BoxWidth + 200), -100);
+        basic.getPosition().set(ServerFactory.MyFunctionCreateInstance().getRandomNumber(-200, (int) BoxWidth + 200), -100);
         basic.getVelocity().setLength(speed);
         basic.setRotation(setFall());
         this.ID = ID;
         basic.getVelocity().setAngle(basic.getRotation());
         basic.getBoundary().setSize(20, 20);
         Text = ServerFactory.TextToObjectCreateInstance(this.basic.getPosition().getX(), this.basic.getPosition().getY() + this.basic.getImage().getHeight() / 2,
-                25, 25, new MyFunction().getRandomWord(), ID);
+                25, 25, ServerFactory.MyFunctionCreateInstance().getRandomWord(), ID);
     }
 
     //Угол падения между случайным минимальным и максимальным углом
@@ -36,13 +36,13 @@ public class Meteor implements IMeteor {
         if (this.basic.getPosition().getX() <= BoxWidth / 2) {
             //Если метеорит появится близко к границе или за границей окна
             if (this.basic.getPosition().getX() < BoxWidth * 0.2) {
-                return 90 - new MyFunction().getRandomNumber(
+                return 90 - ServerFactory.MyFunctionCreateInstance().getRandomNumber(
                         (int) basic.getPosition().getAngle2Vectors(basic.getPosition().getX(), BoxHeight,
                                 BoxWidth / 2, BoxHeight),
                         (int) basic.getPosition().getAngle2Vectors(basic.getPosition().getX(), BoxHeight,
                                 BoxWidth, BoxHeight));
             } else {
-                return 90 - new MyFunction().getRandomNumber(
+                return 90 - ServerFactory.MyFunctionCreateInstance().getRandomNumber(
                         -(int) basic.getPosition().getAngle2Vectors(basic.getPosition().getX(), BoxHeight,
                                 0, BoxHeight),
                         (int) basic.getPosition().getAngle2Vectors(basic.getPosition().getX(), BoxHeight,
@@ -50,19 +50,34 @@ public class Meteor implements IMeteor {
             }
         } else {
             if (this.basic.getPosition().getX() > BoxWidth - BoxWidth * 0.2) {
-                return 90 +new MyFunction().getRandomNumber(
+                return 90 + ServerFactory.MyFunctionCreateInstance().getRandomNumber(
                         (int) basic.getPosition().getAngle2Vectors(basic.getPosition().getX(), BoxHeight,
                                 BoxWidth / 2, BoxHeight),
                         (int) basic.getPosition().getAngle2Vectors(basic.getPosition().getX(), BoxHeight,
                                 0, BoxHeight));
             } else {
-                return 90 + new MyFunction().getRandomNumber(
+                return 90 + ServerFactory.MyFunctionCreateInstance().getRandomNumber(
                         -(int) basic.getPosition().getAngle2Vectors(basic.getPosition().getX(), BoxHeight,
                                 BoxWidth, BoxHeight),
                         (int) basic.getPosition().getAngle2Vectors(basic.getPosition().getX(), BoxHeight,
                                 0, BoxHeight));
             }
         }
+    }
+
+    @Override
+    public int getID(){
+        return ID;
+    }
+
+    @Override
+    public ITextToObject getTextObject(){
+        return Text;
+    }
+
+    @Override
+    public ISprite getBasic(){
+        return basic;
     }
 
     //Обновление объекта
@@ -74,4 +89,8 @@ public class Meteor implements IMeteor {
         if (basic.getPosition().getY() > BoxHeight - 50) Fall = true;
     }
 
+    @Override
+    public boolean isFall() {
+        return Fall;
+    }
 }

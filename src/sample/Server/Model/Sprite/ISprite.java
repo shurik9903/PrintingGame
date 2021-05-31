@@ -14,8 +14,12 @@ public interface ISprite {
 
     Rectangle getBoundary();
 
-    boolean overlaps(Sprite other);
-    boolean overlaps(Rectangle other);
+    boolean overlaps(ISprite other);
+
+    boolean overlaps(IRectangle other);
+
+    //Получение угла поворота до объекта
+    double getAngleToTarget(ISprite other);
 
     //Обновление объекта
     void update(double deltaTime);
@@ -27,7 +31,6 @@ public interface ISprite {
     IRectangle getRectangle();
 
     IImageDate getImage();
-
 
     double getRotation();
 

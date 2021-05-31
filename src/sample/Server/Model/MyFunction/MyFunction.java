@@ -1,5 +1,6 @@
 package sample.Server.Model.MyFunction;
 
+import sample.Server.Model.Meteor.IMeteor;
 import sample.Server.Model.Meteor.Meteor;
 
 import java.io.IOException;
@@ -11,16 +12,17 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Stream;
 
-public class MyFunction {
+public class MyFunction implements IMyFunction{
 
     //Назначение свободного уникльного ID для метеоритов
-    public int setID(ArrayList<Meteor> meteors) {
+    @Override
+    public int setID(ArrayList<IMeteor> meteors) {
 
         if (meteors.size() == 0) return 1;
 
         ArrayList<Integer> BusyID = new ArrayList<>();
-        for (Meteor meteor : meteors)
-            BusyID.add(meteor.ID);
+        for (IMeteor meteor : meteors)
+            BusyID.add(meteor.getID());
         for (int i = 1; i < 1000; i++) {
             if (!BusyID.contains(i)) return i;
         }
@@ -28,12 +30,14 @@ public class MyFunction {
     }
 
     //Функция получение случайных чисел в диапазоне
+    @Override
     public int getRandomNumber(int min, int max) {
         if (min > max) return max + new Random().nextInt(min - max + 1);
         else return min + new Random().nextInt(max - min + 1);
     }
 
     //Функиця перевода английских букв в русские
+    @Override
     public String RusText(Character c) {
 
         c = Character.toLowerCase(c);
@@ -55,6 +59,7 @@ public class MyFunction {
     }
 
     //Конвертирование анг. текста в рус.; получение индекса буквы
+    @Override
     public int IndexRusEng(ArrayList<String> arr) {
 
         ArrayList<Character> rus = new ArrayList<>(
@@ -80,6 +85,7 @@ public class MyFunction {
     }
 
     //Получение индекса цифры
+    @Override
     public int IndexNumber(ArrayList<String> arr) {
         ArrayList<Character> num = new ArrayList<>(
                 Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
@@ -92,8 +98,9 @@ public class MyFunction {
     }
 
     //Функция получения слачайного слово из файла словаря
+    @Override
     public String getRandomWord() {
-        try (Stream<String> lines = Files.lines(Paths.get("./src/sample/Text.txt"), StandardCharsets.UTF_8)) {
+        try (Stream<String> lines = Files.lines(Paths.get("./src/sample/Data/Text.txt"), StandardCharsets.UTF_8)) {
             return lines.skip(getRandomNumber(0, 10392)).findFirst().get();
         } catch (IOException e) {
             e.printStackTrace();

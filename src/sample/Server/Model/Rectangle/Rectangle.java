@@ -3,7 +3,28 @@ package sample.Server.Model.Rectangle;
 //Класс прямоугольник: Служит коллизией(точка соприкосновения) объектов
 public class Rectangle implements IRectangle{
     private double x, y;
-    private double width, height;
+    private double Width, Height;
+
+    @Override
+    public double getX(){
+        return x;
+    }
+
+    @Override
+    public double getY(){
+        return y;
+    }
+
+    @Override
+    public double getWidth(){
+        return Width;
+    }
+
+    @Override
+    public double getHeight(){
+        return Height;
+    }
+
 
     //конструктор
     public Rectangle() {
@@ -26,17 +47,17 @@ public class Rectangle implements IRectangle{
     //установка размера
     @Override
     public void setSize(double width, double height) {
-        this.width = width;
-        this.height = height;
+        this.Width = width;
+        this.Height = height;
     }
 
     //Проверка на пересечение с другим прямоугольником
     @Override
-    public boolean overlaps(Rectangle other) {
-        boolean noOverlaps = this.x + this.width < other.x ||
-                other.x + other.width < this.x ||
-                this.y + this.height < other.y ||
-                other.y + other.height < this.y;
+    public boolean overlaps(IRectangle other) {
+        boolean noOverlaps = this.x + this.Width < other.getX() ||
+                other.getX() + other.getWidth() < this.x ||
+                this.y + this.Height < other.getY() ||
+                other.getY() + other.getHeight() < this.y;
 
         return !noOverlaps;
     }

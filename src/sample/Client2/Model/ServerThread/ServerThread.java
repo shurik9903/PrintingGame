@@ -1,22 +1,24 @@
-package sample.Client.Model;
+package sample.Client2.Model.ServerThread;
 
-import sample.GameData;
-import sample.UserData;
+import sample.Client2.Model.ServerThread.IServerThread;
+import sample.Data.DataInterface.IGameData;
+import sample.Data.DataInterface.IUserData;
+import sample.Data.GameData;
 
 import java.io.*;
 import java.net.Socket;
 
-class ServerThread implements Runnable{
+public class ServerThread implements Runnable, IServerThread {
 
     private Thread thread;
     private final Socket socket;
     private InputStream in = null;
     private OutputStream out = null;
-    private final UserData userData;
-    private GameData gameData;
+    private final IUserData userData;
+    private IGameData gameData;
 
 
-    ServerThread(Socket server, UserData userData){
+    public ServerThread(Socket server, IUserData userData){
         this.socket = server;
         this.userData = userData;
         this.gameData = null;
@@ -24,11 +26,13 @@ class ServerThread implements Runnable{
         if (Connection()) thread.start();
     }
 
-    public GameData getGameData(){
+    @Override
+    public IGameData getGameData(){
         return gameData;
     }
 
-    private boolean Connection() {
+    @Override
+    public boolean Connection() {
         try {
             in = socket.getInputStream();
             out = socket.getOutputStream();
@@ -40,8 +44,7 @@ class ServerThread implements Runnable{
         }
     }
 
-
-
+    @Override
     public void CloseConnecting(){
         try {
             System.out.println("Exit");

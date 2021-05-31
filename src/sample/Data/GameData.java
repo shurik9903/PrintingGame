@@ -1,28 +1,30 @@
-package sample;
+package sample.Data;
 
 import javafx.scene.canvas.GraphicsContext;
-import sample.Server.Model.ImageDate.ImageDate;
-import sample.Server.Model.MyImage.MyImage;
+import sample.Data.DataInterface.*;
+import sample.Server.Model.ImageDate.IImageDate;
+import sample.Server.Model.MyImage.IMyImage;
+import sample.Server.Model.ServerFactory.ServerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class GameData implements Serializable {
+public class GameData implements Serializable, IGameData {
     @Serial
     private static final long serialVersionUID = 6529685098267757691L;
     private final int UserScore;
     private boolean GameProcess;
-    private final ArrayList<MeteorData> MeteorList;
-    private final ArrayList<SpriteData> PlayersGun;
-    private final ArrayList<ProjectileData> ProjectileList;
-    private final ArrayList<AimData> PlayersAim;
+    private final ArrayList<IMeteorData> MeteorList;
+    private final ArrayList<ISpriteData> PlayersGun;
+    private final ArrayList<IProjectileData> ProjectileList;
+    private final ArrayList<IAimData> PlayersAim;
 
-    private final EnterToNumberData enterToNumberData;
+    private final IEnterToNumberData enterToNumberData;
 
 
-    public GameData(int UserScore, ArrayList<SpriteData> PlayersGun, boolean GameProcess, ArrayList<MeteorData> MeteorList, ArrayList<ProjectileData> ProjectileList, ArrayList<AimData> PlayersAim, EnterToNumberData enterToNumberData){
+    public GameData(int UserScore, ArrayList<ISpriteData> PlayersGun, boolean GameProcess, ArrayList<IMeteorData> MeteorList, ArrayList<IProjectileData> ProjectileList, ArrayList<IAimData> PlayersAim, IEnterToNumberData enterToNumberData){
         this.UserScore = UserScore;
         this.PlayersGun = PlayersGun;
         this.GameProcess = GameProcess;
@@ -43,32 +45,33 @@ public class GameData implements Serializable {
     }
 
 
-    public static class MeteorData extends SpriteData implements Serializable{
+    public static class MeteorData implements Serializable, IMeteorData {
 
-        public TextData Text;
+        private ITextData Text;
+        private ISpriteData spriteData;
 
-        public MeteorData(double PosX, double PosY, double rotation, ImageDate image, TextData Text) {
-            super(PosX, PosY, rotation, image);
+        public MeteorData(double PosX, double PosY, double rotation, IImageDate image, ITextData Text) {
+            spriteData = ServerFactory.SpriteDataCreateInstance(PosX, PosY, rotation, image);
             this.Text = Text;
         }
 
         //отрисовка объекта
         @Override
         public void render(GraphicsContext gc) {
-            super.render(gc);
+            spriteData.render(gc);
             this.Text.render(gc);
         }
 
     }
 
-    public static class SpriteData implements Serializable{
+    public static class SpriteData implements Serializable, ISpriteData {
 
         public double PosX, PosY;
         public double rotation;
-        public ImageDate image;
+        public IImageDate image;
 
         //конуструктор
-        public SpriteData(double PosX, double PosY, double rotation, ImageDate image) {
+        public SpriteData(double PosX, double PosY, double rotation, IImageDate image) {
             this.PosX = PosX;
             this.PosY = PosY;
             this.rotation = rotation;
@@ -77,6 +80,7 @@ public class GameData implements Serializable {
 
 
         //Отрисовка обекта на экране
+        @Override
         public void render(GraphicsContext gc) {
 
             gc.save();
@@ -90,18 +94,18 @@ public class GameData implements Serializable {
         }
     }
 
-    public static class TextData implements Serializable{
+    public static class TextData implements Serializable, ITextData{
 
         public double x, y;
         public double Width, Height;
         public int TextLength;
-        public ArrayList<ImageDate> FrameImage, FrameNumber;
-        public ArrayList<ArrayList<MyImage>> FrameText;
+        public ArrayList<IImageDate> FrameImage, FrameNumber;
+        public ArrayList<ArrayList<IMyImage>> FrameText;
 
         //конструктор
         public TextData(double x, double y, double Width, double Height,int TextLength,
-                        ArrayList<ImageDate> FrameImage, ArrayList<ImageDate> FrameNumber,
-                        ArrayList<ArrayList<MyImage>> FrameText) {
+                        ArrayList<IImageDate> FrameImage, ArrayList<IImageDate> FrameNumber,
+                        ArrayList<ArrayList<IMyImage>> FrameText) {
             this.x = x;
             this.y = y;
             this.TextLength = TextLength;
@@ -113,6 +117,7 @@ public class GameData implements Serializable {
         }
 
         //Отрисовка объекта
+        @Override
         public void render(GraphicsContext gc) {
             gc.save();
 
@@ -121,7 +126,7 @@ public class GameData implements Serializable {
 
             gc.translate(this.x, this.y);
 
-            for (ImageDate i : this.FrameImage) {
+            for (IImageDate i : this.FrameImage) {
                 gc.translate(+this.Width, 0);
                 gc.drawImage(i.getImage(), 0, 0);
 
@@ -141,29 +146,40 @@ public class GameData implements Serializable {
 
     }
 
-    public static class ProjectileData extends SpriteData implements Serializable{
+    public static class ProjectileData implements Serializable, IProjectileData{
+
+        private final ISpriteData spriteData;
         //Конструктор класса
-        public ProjectileData(double PosX, double PosY, double rotation, ImageDate image) {
-            super(PosX, PosY, rotation, image);
+        public ProjectileData(double PosX, double PosY, double rotation, IImageDate image) {
+            spriteData = ServerFactory.SpriteDataCreateInstance(PosX, PosY, rotation, image);
+        }
+
+        @Override
+        public ISpriteData getSpriteData() {
+            return spriteData;
         }
     }
 
-    public static class AimData extends SpriteData implements Serializable{
+    public static class AimData implements Serializable, IAimData{
+        private final ISpriteData spriteData;
         //Конструктор класса
-        public AimData(double PosX, double PosY, double rotation,ImageDate image) {
-            super(PosX, PosY, rotation, image);
+        public AimData(double PosX, double PosY, double rotation,IImageDate image) {
+            spriteData = ServerFactory.SpriteDataCreateInstance(PosX, PosY, rotation, image);
+        }
+
+        @Override
+        public ISpriteData getSpriteData() {
+            return spriteData;
         }
     }
 
-
-
-    public static class EnterToNumberData implements Serializable {
+    public static class EnterToNumberData implements Serializable, IEnterToNumberData {
         private final double x, y;
         private final double Size;
-        private final ArrayList<ImageDate> FrameNumber;
+        private final ArrayList<IImageDate> FrameNumber;
 
         //Конструктор
-        public EnterToNumberData(double PosX, double PosY, double Size, ArrayList<ImageDate> FrameNumber) {
+        public EnterToNumberData(double PosX, double PosY, double Size, ArrayList<IImageDate> FrameNumber) {
             this.x = PosX;
             this.y = PosY;
             this.Size = Size;
@@ -171,12 +187,13 @@ public class GameData implements Serializable {
         }
 
         //Отрисовка номера
+        @Override
         public void render(GraphicsContext gc) {
             gc.save();
 
             gc.translate(this.x, this.y);
             if (FrameNumber != null)
-                for (ImageDate i : this.FrameNumber) {
+                for (IImageDate i : this.FrameNumber) {
                     gc.translate(+Size, 0);
                     gc.drawImage(i.getImage(), 0, 0);
                 }
@@ -186,35 +203,43 @@ public class GameData implements Serializable {
 
     }
 
-    public EnterToNumberData getEnterToNumberData() {
+    @Override
+    public IEnterToNumberData getEnterToNumberData() {
         return enterToNumberData;
     }
 
+    @Override
     public int getUserScore() {
         return UserScore;
     }
 
-    public ArrayList<SpriteData> getPlayersGun(){
+    @Override
+    public ArrayList<ISpriteData> getPlayersGun(){
         return PlayersGun;
     }
 
+    @Override
     public boolean isGameProcess() {
         return GameProcess;
     }
 
+    @Override
     public void setGameProcess(boolean gameProcess) {
         GameProcess = gameProcess;
     }
 
-    public ArrayList<MeteorData> getMeteorList() {
+    @Override
+    public ArrayList<IMeteorData> getMeteorList() {
         return MeteorList;
     }
 
-    public ArrayList<ProjectileData> getProjectileList() {
+    @Override
+    public ArrayList<IProjectileData> getProjectileList() {
         return ProjectileList;
     }
 
-    public ArrayList<AimData> getAim() {
+    @Override
+    public ArrayList<IAimData> getAim() {
         return PlayersAim;
     }
 }
