@@ -2,6 +2,12 @@ package sample.Server.Model;
 
 import javafx.geometry.Point2D;
 import sample.GameData;
+import sample.Server.Model.GameOptions.GameOptions;
+import sample.Server.Model.Meteor.Meteor;
+import sample.Server.Model.MyFunction.MyFunction;
+import sample.Server.Model.Player.Player;
+import sample.Server.Model.Projectile.Projectile;
+import sample.Server.Model.UserConnect.UserConnect;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -57,13 +63,13 @@ public class Model {
     Thread GameLoop;
 
     public Player setPlayer1() {
-        Player1 = new Player(150, WindowWidth/4, WindowHeight - 75);
+        Player1 = new Player(150, WindowWidth/6, WindowHeight - 100);
         AllPlayer.add(Player1);
         return Player1;
     }
 
     public Player setPlayer2() {
-        Player2 = new Player(150, WindowWidth-WindowWidth/4, WindowHeight - 75);
+        Player2 = new Player(150, WindowWidth-WindowWidth/6, WindowHeight - 100);
         AllPlayer.add(Player2);
         return Player2;
     }
@@ -82,11 +88,11 @@ public class Model {
 
         AllPlayer = new ArrayList<>();
 
-        WindowHeight = 600;
+        WindowHeight = 470;
         WindowWidth = 800;
 
         //Частота отрисовки
-        double deltaTime = 1. / 60;
+        double deltaTime = 1. / 24;
 
         //Описание настроек игры
         Game = new GameOptions(1, 3, WindowWidth, WindowHeight);
@@ -97,7 +103,6 @@ public class Model {
         //Поток обработки объектов
         GameLoop = new Thread(() -> {
             while (true) {
-                for (UserConnect user : Users) user.InData();
 
 
                 Game.GameProcess(MeteorList);
@@ -163,21 +168,27 @@ public class Model {
                 for (Player player : AllPlayer) {
                     player.getProjectileList().removeIf(projectile -> projectile.Destroy);
 
+                    for (Projectile projectile : player.getProjectileList())
+                        projectile.update(deltaTime);
+
                     //Обновление орудия
                     player.update(deltaTime);
                 }
+
                 //Обновление списка метеоритов
                 for (Meteor Meteor : MeteorList)
                     Meteor.update(deltaTime);
+
 
                 ArrayList<GameData.MeteorData> meteorDataList = new ArrayList<>();
                 for (Meteor meteor : MeteorList)
                     meteorDataList.add(ConvertMeteorToData(meteor));
 
-                //Обновление списка снарядов
+                ArrayList<GameData.ProjectileData> projectileData = new ArrayList<>();
+                ArrayList<GameData.SpriteData> GunData = new ArrayList<>();
+                ArrayList<GameData.AimData> aimData = new ArrayList<>();
+
                 for (Player player : AllPlayer) {
-                    for (Projectile projectile : player.getProjectileList())
-                        projectile.update(deltaTime);
 
                     //Обновление прицела
                     player.getPlayerAim().update(deltaTime);
@@ -192,21 +203,24 @@ public class Model {
                             player.rotation = angle + 180;
                     }
 
-                    ArrayList<GameData.ProjectileData> projectileData = new ArrayList<>();
+
                     for (Projectile projectile : player.getProjectileList())
                         projectileData.add(new GameData.ProjectileData(projectile.position.x, projectile.position.y,
                                 projectile.rotation, projectile.image));
 
-                    GameData.AimData aimData = new GameData.AimData(player.getPlayerAim().position.x, player.getPlayerAim().position.y, player.getPlayerAim().rotation, player.getPlayerAim().image);
+                    GunData.add(new GameData.SpriteData(player.position.x, player.position.y, player.rotation, player.image));
+                    aimData.add(new GameData.AimData(player.getPlayerAim().position.x, player.getPlayerAim().position.y, player.getPlayerAim().rotation, player.getPlayerAim().image));
+                }
+
+                for (Player player : AllPlayer) {
                     GameData.EnterToNumberData enterToNumberData = new GameData.EnterToNumberData(player.getEnterNumber().x, player.getEnterNumber().y, player.getEnterNumber().Width, player.getEnterNumber().FrameNumber);
-                    player.setGameData(new GameData(Game.Score, player.rotation, Game.GameStop, meteorDataList, projectileData, aimData, enterToNumberData));
+                    player.setGameData(new GameData(Game.Score, GunData, Game.GameStop, meteorDataList, projectileData, aimData, enterToNumberData));
 
                 }
 
-                for (UserConnect user : Users) user.OutData();
 
                 try {
-                    Thread.sleep(1000/60);
+                    Thread.sleep(1000 / 24);
                 } catch (Exception e) {
                 }
             }

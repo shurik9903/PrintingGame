@@ -1,8 +1,8 @@
 package sample;
 
 import javafx.scene.canvas.GraphicsContext;
-import sample.Server.Model.ImageDate;
-import sample.Server.Model.MyImage;
+import sample.Server.Model.ImageDate.ImageDate;
+import sample.Server.Model.MyImage.MyImage;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,32 +13,35 @@ public class GameData implements Serializable {
     @Serial
     private static final long serialVersionUID = 6529685098267757691L;
     private final int UserScore;
-    private final double PlayerRotation;
     private boolean GameProcess;
     private final ArrayList<MeteorData> MeteorList;
+    private final ArrayList<SpriteData> PlayersGun;
     private final ArrayList<ProjectileData> ProjectileList;
-    private final AimData aim;
+    private final ArrayList<AimData> PlayersAim;
+
     private final EnterToNumberData enterToNumberData;
 
-    public GameData(int UserScore, double PlayerRotation, boolean GameProcess, ArrayList<MeteorData> MeteorList, ArrayList<ProjectileData> ProjectileList, AimData aim, EnterToNumberData enterToNumberData){
+
+    public GameData(int UserScore, ArrayList<SpriteData> PlayersGun, boolean GameProcess, ArrayList<MeteorData> MeteorList, ArrayList<ProjectileData> ProjectileList, ArrayList<AimData> PlayersAim, EnterToNumberData enterToNumberData){
         this.UserScore = UserScore;
-        this.PlayerRotation = PlayerRotation;
+        this.PlayersGun = PlayersGun;
         this.GameProcess = GameProcess;
         this.MeteorList = MeteorList;
         this.ProjectileList = ProjectileList;
-        this.aim = aim;
+        this.PlayersAim = PlayersAim;
         this.enterToNumberData = enterToNumberData;
     }
 
     public GameData(){
         this.UserScore = 0;
-        this.PlayerRotation = 0;
+        this.PlayersGun = new ArrayList<>();
         this.GameProcess = false;
         this.MeteorList = new ArrayList<>();
         this.ProjectileList = new ArrayList<>();
-        this.aim = null;
+        this.PlayersAim = new ArrayList<>();
         this.enterToNumberData = null;
     }
+
 
     public static class MeteorData extends SpriteData implements Serializable{
 
@@ -191,8 +194,8 @@ public class GameData implements Serializable {
         return UserScore;
     }
 
-    public double getPlayerRotation() {
-        return PlayerRotation;
+    public ArrayList<SpriteData> getPlayersGun(){
+        return PlayersGun;
     }
 
     public boolean isGameProcess() {
@@ -211,7 +214,7 @@ public class GameData implements Serializable {
         return ProjectileList;
     }
 
-    public AimData getAim() {
-        return aim;
+    public ArrayList<AimData> getAim() {
+        return PlayersAim;
     }
 }

@@ -1,4 +1,4 @@
-package sample.Client.Model;
+package sample.Client2.Model;
 
 import sample.GameData;
 import sample.UserData;
