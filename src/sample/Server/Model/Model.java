@@ -109,7 +109,6 @@ public class Model implements IModel {
         GameLoop = new Thread(() -> {
             while (true) {
 
-
                 Game.GameProcess(MeteorList);
                 if (Game.getLife() < 1 || (Game.getMeteorsSpawn() >= Game.getMeteorsCount() && MeteorList.isEmpty())) {
                     Game.setGameStop(true);
@@ -141,9 +140,12 @@ public class Model implements IModel {
 
                     //Действие при вводе буквы
                     if (ServerFactory.MyFunctionCreateInstance().IndexRusEng(player.getKeyList()) != -1) {
+                        System.out.println(player.getPlayerAim().getTargetMeteor());
+                        System.out.println(player.getPlayerAim().getTargetCaught());
                         if (player.getPlayerAim().getTargetMeteor() != null &&
                                 player.getPlayerAim().getTargetCaught() &&
-                                !player.getPlayerAim().getTargetMeteor().getBasic().overlaps((IRectangle) player) && player.getEnergy() != 0) {
+                                !player.getPlayerAim().getTargetMeteor().getBasic().overlaps(player.getBasic()) && player.getEnergy() != 0) {
+                            System.out.println(player.getKeyList());
                             player.getProjectileList().add(ServerFactory.ProjectileCreateInstance(
                                     player, player.getKeyList().get(0).toCharArray()[0],
                                     WindowHeight, WindowWidth, player.getPlayerAim().getTargetMeteor()));

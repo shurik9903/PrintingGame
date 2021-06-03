@@ -49,7 +49,7 @@ public class Projectile implements IProjectile{
     @Override
     public void MoveAndFireToTarget() {
         if (meteor == null) return;
-        if (basic.overlaps((IRectangle) meteor) && !Miss)
+        if (basic.overlaps(meteor.getBasic()) && !Miss)
             if (!meteor.getTextObject().ChangeImage(Letter)) Miss = true;
             else Destroy = true;
         else if (Miss) {
@@ -58,7 +58,7 @@ public class Projectile implements IProjectile{
                     basic.getPosition().getY() < -50 ||
                     BoxHeight + 50 < basic.getPosition().getY()) Destroy = true;
         } else {
-            basic.setRotation(getAngleToTarget((ISprite) meteor));
+            basic.setRotation(getAngleToTarget(meteor.getBasic()));
             basic.getVelocity().setAngle(basic.getRotation());
         }
     }

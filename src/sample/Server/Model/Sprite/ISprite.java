@@ -12,7 +12,7 @@ public interface ISprite {
 
     void setImage(String fileImageName);
 
-    Rectangle getBoundary();
+    IRectangle getBoundary();
 
     boolean overlaps(ISprite other);
 

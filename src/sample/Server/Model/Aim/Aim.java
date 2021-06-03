@@ -90,7 +90,8 @@ public class Aim implements IAim{
             return;
         }
 
-        if (this.basic.overlaps((IRectangle) TargetMeteor))
+        System.out.println("QWE" + this.basic.overlaps(TargetMeteor.getBasic().getBoundary()));
+        if (this.basic.overlaps(TargetMeteor.getBasic()))
             TargetCaught = true;
 
         if (TargetCaught) {
@@ -100,7 +101,7 @@ public class Aim implements IAim{
             return;
         }
 
-        basic.getVelocity().setAngle(basic.getAngleToTarget((ISprite) TargetMeteor));
+        basic.getVelocity().setAngle(basic.getAngleToTarget(TargetMeteor.getBasic()));
     }
 
     //Обновление объекта

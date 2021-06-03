@@ -59,9 +59,9 @@ public class Sprite implements ISprite{
 
     //Перемещение колизии объекта
     @Override
-    public Rectangle getBoundary() {
+    public IRectangle getBoundary() {
         this.boundary.setPosition(this.position.getX(), this.position.getY());
-        return (Rectangle) this.boundary;
+        return this.boundary;
     }
 
     //Расчет соприкосновение с другим объектом
