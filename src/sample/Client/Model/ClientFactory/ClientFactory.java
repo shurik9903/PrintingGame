@@ -3,29 +3,35 @@ package sample.Client.Model.ClientFactory;
 import javafx.scene.image.ImageView;
 import sample.Client.Model.Gif.Gif;
 import sample.Client.Model.Gif.IGif;
-import sample.Client.Model.ImageDate.IImageDate;
-import sample.Client.Model.ImageDate.ImageDate;
+import sample.Client.Model.IModel;
+import sample.Client.Model.Model;
 import sample.Client.Model.ServerThread.IServerThread;
 import sample.Client.Model.ServerThread.ServerThread;
 import sample.Data.DataInterface.*;
 import sample.Data.GameData;
 import sample.Data.UserData;
+import sample.Server.Model.ImageDate.IImageDate;
+import sample.Server.Model.ImageDate.ImageDate;
 
 import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientFactory {
 
-    public static ISpriteData SpriteDataCreateInstance(double PosX, double PosY, double rotation, sample.Server.Model.ImageDate.IImageDate image){
-        return new GameData.SpriteData(PosX,PosY,rotation,image);
+    public static IModel  ModelCreateInstance(){
+        return new Model();
     }
 
-    public static IProjectileData ProjectileDataCreateInstance(double PosX, double PosY, double rotation, sample.Server.Model.ImageDate.IImageDate image){
-        return new GameData.ProjectileData(PosX,PosY,rotation,image);
+    public static ISpriteData SpriteDataCreateInstance(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file){
+        return new GameData.SpriteData(PosX,PosY,rotation, ImageDataWidth, ImageDataHeight, file);
     }
 
-    public static IAimData AimDataCreateInstance(double PosX, double PosY, double rotation, sample.Server.Model.ImageDate.IImageDate image){
-        return new GameData.AimData(PosX,PosY,rotation,image);
+    public static IProjectileData ProjectileDataCreateInstance(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file){
+        return new GameData.ProjectileData( PosX,  PosY,  rotation, ImageDataWidth,  ImageDataHeight,  file);
+    }
+
+    public static IAimData AimDataCreateInstance(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file){
+        return new GameData.AimData(PosX,  PosY,  rotation, ImageDataWidth,  ImageDataHeight,  file);
     }
 
     public static IUserData UserDataCreateInstance(String UserName, ArrayList<String> KeyList){
@@ -54,11 +60,13 @@ public class ClientFactory {
 
     public static IImageDate ImageDateCreateInstance(String fileImageName, double Width, double Height) {
         return new ImageDate(fileImageName,Width,Height);
+
     }
 
     public static IImageDate ImageDateCreateInstance(String fileImageName) {
         return new ImageDate(fileImageName);
     }
+
 
 
     public static IGif GifCreateInstance(String Directory, double Size, int FPS){

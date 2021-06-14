@@ -36,7 +36,6 @@ public class Model implements IModel{
 
         //Проверка на зажатие кнопки
         AtomicBoolean KeyHold = new AtomicBoolean(false);
-
         //Графический контекста для отрисовки объектов
         GraphicsContext GCGame = GameCanvas;
         GraphicsContext GPCGame = GamePanelCanvas;
@@ -65,7 +64,9 @@ public class Model implements IModel{
         //Добавление действий на форму | Действие при нажатие клавиши
         APMenu.setOnKeyPressed(
                 (KeyEvent e) -> {
+                    //Если игра идет
                     if (!GD.isGameProcess()) {
+                        //Если клавиша не зажата
                         if (!KeyHold.get()) {
                             if (e.getCode().toString().equals("SHIFT"))
                                 KeyList.add("SHIFT");
@@ -103,13 +104,14 @@ public class Model implements IModel{
                     Meteor.render(GCGame);
 
                 //Отрисовка списка снарядов
-                for (IProjectileData projectile : GD.getProjectileList())
-                    projectile.getSpriteData().render(GCGame);
+                for (IProjectileData projectile : GD.getProjectileList()) {
+                    projectile.render(GCGame);
+                }
 
                 //Отрисовка прицела
                 if (GD.getAim() != null)
                     for (IAimData aim : GD.getAim())
-                        aim.getSpriteData().render(GCGame);
+                        aim.render(GCGame);
 
                 if (GD.getPlayersGun() != null)
                     for (ISpriteData gun : GD.getPlayersGun())
@@ -142,6 +144,7 @@ public class Model implements IModel{
     }
 
 
+    //Отрисовывание очков
     @Override
     public void DrawScore(int Score, int OldScore, HBox HBScore){
         if (OldScore != Score) {

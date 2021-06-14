@@ -37,7 +37,7 @@ public class GameOptions implements IGameOptions{
 
     @Override
     public void setPeriod(){
-        Period = ServerFactory.MyFunctionCreateInstance().getRandomNumber(7 - Difficulty * 2, 12 - Difficulty * 2);
+        Period = ServerFactory.MyFunctionCreateInstance().getRandomNumber(3 - Difficulty * 2, 7 - Difficulty * 2);
     }
 
     @Override

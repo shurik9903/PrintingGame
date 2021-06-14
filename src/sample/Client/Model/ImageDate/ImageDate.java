@@ -1,7 +1,5 @@
 package sample.Client.Model.ImageDate;
 
-import javafx.scene.image.Image;
-
 import java.io.Serializable;
 
 public class ImageDate implements Serializable, IImageDate {
@@ -30,25 +28,17 @@ public class ImageDate implements Serializable, IImageDate {
     }
 
     @Override
-    public double getWidth() {
+    public double getImageWidth() {
         return Width;
     }
 
     @Override
-    public double getHeight() {
+    public double getImageHeight() {
         return Height;
     }
 
     @Override
     public String getFileImageName() {
         return fileImageName;
-    }
-
-    @Override
-    public Image getImage() {
-        if (Width == 0 || Height == 0)
-            return new Image(fileImageName);
-        else
-            return new Image(fileImageName, Width, Height, false, false);
     }
 }

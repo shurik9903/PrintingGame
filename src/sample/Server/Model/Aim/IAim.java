@@ -1,12 +1,11 @@
 package sample.Server.Model.Aim;
 
 import sample.Server.Model.Meteor.IMeteor;
-import sample.Server.Model.Meteor.Meteor;
 import sample.Server.Model.Sprite.ISprite;
 
 import java.util.ArrayList;
 
-public interface IAim {
+public interface IAim extends ISprite {
 
     //Нацеливание на метеорит из спика
     void AimToMeteor(ArrayList<IMeteor> meteor, boolean LR);
@@ -23,6 +22,4 @@ public interface IAim {
     IMeteor getTargetMeteor();
 
     boolean getTargetCaught();
-
-    ISprite getBasic();
 }

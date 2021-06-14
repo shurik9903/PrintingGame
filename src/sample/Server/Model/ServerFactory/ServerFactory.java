@@ -13,12 +13,15 @@ import sample.Server.Model.ImageDate.IImageDate;
 import sample.Server.Model.ImageDate.ImageDate;
 import sample.Server.Model.Meteor.IMeteor;
 import sample.Server.Model.Meteor.Meteor;
+import sample.Server.Model.Model;
 import sample.Server.Model.MyFunction.IMyFunction;
 import sample.Server.Model.MyFunction.MyFunction;
 import sample.Server.Model.MyImage.IMyImage;
 import sample.Server.Model.MyImage.MyImage;
 import sample.Server.Model.Player.IPlayer;
+import sample.Server.Model.Player.IPlayerAim;
 import sample.Server.Model.Player.Player;
+import sample.Server.Model.Player.PlayerAim;
 import sample.Server.Model.Projectile.IProjectile;
 import sample.Server.Model.Projectile.Projectile;
 import sample.Server.Model.Rectangle.IRectangle;
@@ -29,24 +32,43 @@ import sample.Server.Model.TextToObject.ITextToObject;
 import sample.Server.Model.TextToObject.TextToObject;
 import sample.Server.Model.UserConnect.IUserConnect;
 import sample.Server.Model.UserConnect.UserConnect;
-import sample.Server.Model.Vector.IVector;
-import sample.Server.Model.Vector.Vector;
+import sample.Server.Model.Vector.*;
 
 import java.net.Socket;
 import java.util.ArrayList;
 
 public class ServerFactory{
 
+    public static IVecVel VecVelCreateInstance() {
+        return new VecVel();
+    }
+
+    public static IVecVel VecVelCreateInstance(double x, double y) {
+        return new VecVel(x,y);
+    }
+
+    public static IVecPos VecPosCreateInstance() {
+        return new VecPos();
+    }
+
+    public static IVecPos VecPosCreateInstance(double x, double y) {
+        return new VecPos(x,y);
+    }
+
+    public static IModel ModelCreateInstance(){
+        return new Model();
+    }
+
     public static IEnterToNumberData EnterToNumberDataCreateInstance(double PosX, double PosY, double Size, ArrayList<IImageDate> FrameNumber){
         return new GameData.EnterToNumberData(PosX,PosY,Size,FrameNumber);
     }
 
-    public static IAimData AimDataCreateInstance(double PosX, double PosY, double rotation,IImageDate image){
-        return new GameData.AimData(PosX,PosY,rotation,image);
+    public static IAimData AimDataCreateInstance(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file){
+        return new GameData.AimData(PosX,  PosY,  rotation, ImageDataWidth,  ImageDataHeight,  file);
     }
 
-    public static IProjectileData ProjectileDataCreateInstance(double PosX, double PosY, double rotation, IImageDate image){
-        return new GameData.ProjectileData(PosX,PosY,rotation,image);
+    public static IProjectileData ProjectileDataCreateInstance(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file){
+        return new GameData.ProjectileData(PosX,  PosY,  rotation, ImageDataWidth,  ImageDataHeight,  file);
     }
 
     public static ITextData TextDataCreateInstance(double x, double y, double Width, double Height,int TextLength,
@@ -55,8 +77,8 @@ public class ServerFactory{
         return new GameData.TextData(x,y,Width,Height,TextLength,FrameImage,FrameNumber, FrameText);
     }
 
-    public static IMeteorData MeteorDataCreateInstance(double PosX, double PosY, double rotation, IImageDate image, ITextData Text){
-        return new GameData.MeteorData(PosX,PosY,rotation,image,Text);
+    public static IMeteorData MeteorDataCreateInstance(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file, ITextData Text){
+        return new GameData.MeteorData(PosX,  PosY,  rotation, ImageDataWidth,  ImageDataHeight,  file,Text);
     }
 
     public static IProjectile ProjectileCreateInstance(IPlayer Player, char Letter, double BoxHeight, double BoxWidth, IMeteor meteor){
@@ -79,8 +101,8 @@ public class ServerFactory{
         return new UserConnect(Name, User, GameModel);
     }
 
-    public static ISpriteData SpriteDataCreateInstance(double PosX, double PosY, double rotation, IImageDate image){
-        return new GameData.SpriteData(PosX,PosY,rotation,image);
+    public static ISpriteData SpriteDataCreateInstance(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file){
+        return new GameData.SpriteData( PosX,  PosY,  rotation, ImageDataWidth,  ImageDataHeight,  file);
     }
 
     public static IUserData UserDataCreateInstance(String UserName, ArrayList<String> KeyList){
@@ -91,8 +113,8 @@ public class ServerFactory{
         return new UserData();
     }
 
-    public static IEnterToNumber EnterToNumberCreateInstance(IPlayer player, double Width, double Height){
-        return new EnterToNumber(player,Width,Height);
+    public static IEnterToNumber EnterToNumberCreateInstance(double Width, double Height,double PosX, double PosY, double ImageWidth, double ImageHeight){
+        return new EnterToNumber( Width,  Height, PosX,  PosY,  ImageWidth,  ImageHeight);
     }
 
     public static IGameData GameDataCreateInstance(int UserScore, java.util.ArrayList<ISpriteData> PlayersGun, boolean GameProcess, ArrayList<IMeteorData> MeteorList, ArrayList<IProjectileData> ProjectileList, ArrayList<IAimData> PlayersAim, IEnterToNumberData enterToNumberData){
@@ -105,6 +127,10 @@ public class ServerFactory{
 
     public static IMyFunction MyFunctionCreateInstance(){
         return new MyFunction();
+    }
+
+    public static IPlayerAim PlayerAimCreateInstance(double BoxWidth, double BoxHeight, double RestrictedArea){
+        return new PlayerAim(BoxWidth,BoxHeight,RestrictedArea);
     }
 
     public static IAim AimCreateInstance(double BoxWidth, double BoxHeight, double RestrictedArea){

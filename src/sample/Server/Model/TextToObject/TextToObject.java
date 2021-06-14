@@ -15,7 +15,7 @@ public class TextToObject implements ITextToObject{
     private int NumberToHits;
     private double x, y;
     private double Width, Height;
-    private String Text;
+    private final String Text;
     private ArrayList<IImageDate> FrameImage, FrameNumber;
     private ArrayList<ArrayList<IMyImage>> FrameText;
     private final int MeteorID;
@@ -29,13 +29,13 @@ public class TextToObject implements ITextToObject{
         NumberToHits = 0;
         MeteorID = ID;
         CreateFrame();
-        setCoordinate(x, y);
+        setTextCoordinate(x, y);
         System.out.println(Text);
     }
 
     //Установка координат формы
     @Override
-    public void setCoordinate(double x, double y) {
+    public void setTextCoordinate(double x, double y) {
         this.x = x - (((2 + Text.length() + (int) (MeteorID / 10)) * this.Width) / 2);
         this.y = y + 10;
     }
@@ -43,12 +43,6 @@ public class TextToObject implements ITextToObject{
     //Описание формы и текста
     @Override
     public void CreateFrame() {
-        /*
-        IImageDate FStart = new ImageDate("Image/R1.png", this.Width, this.Height);
-        IImageDate FEnd = new ImageDate("Image/R3.png", this.Width, this.Height);
-        IImageDate FMiddle = new ImageDate("Image/R2.png", this.Width, this.Height);
-         */
-
         IImageDate FStart = ServerFactory.ImageDateCreateInstance("Image/R1.png", this.Width, this.Height);
         IImageDate FEnd = ServerFactory.ImageDateCreateInstance("Image/R3.png", this.Width, this.Height);
         IImageDate FMiddle = ServerFactory.ImageDateCreateInstance("Image/R2.png", this.Width, this.Height);
@@ -107,42 +101,42 @@ public class TextToObject implements ITextToObject{
     }
 
     @Override
-    public double getX() {
+    public double getTextX() {
         return x;
     }
 
     @Override
-    public void setX(double x) {
+    public void setTextX(double x) {
         this.x = x;
     }
 
     @Override
-    public double getY() {
+    public double getTextY() {
         return y;
     }
 
     @Override
-    public void setY(double y) {
+    public void setTextY(double y) {
         this.y = y;
     }
 
     @Override
-    public double getWidth() {
+    public double getTextWidth() {
         return Width;
     }
 
     @Override
-    public double getHeight() {
+    public double getTextHeight() {
         return Height;
     }
 
     @Override
-    public void setHeight(double height) {
+    public void setTextHeight(double height) {
         Height = height;
     }
 
     @Override
-    public void setWidth(double width) {
+    public void setTextWidth(double width) {
         Width = width;
     }
 

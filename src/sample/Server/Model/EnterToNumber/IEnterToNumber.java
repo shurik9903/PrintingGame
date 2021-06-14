@@ -14,24 +14,21 @@ public interface IEnterToNumber {
     //Инициализация путем добавление картинок в список
     void initialize();
 
-    //Установка координат формы
-    void setCoordinate();
+    double getEntNumX();
 
-    double getX();
+    void setEntNumX(double x);
 
-    void setX(double x);
+    double getEntNumY();
 
-    double getY();
+    void setEntNumY(double y);
 
-    void setY(double y);
+    double getEntNumWidth();
 
-    double getWidth();
+    double getEntNumHeight();
 
-    double getHeight();
+    void setEntNumHeight(double height);
 
-    void setHeight(double height);
-
-    void setWidth(double width);
+    void setEntNumWidth(double width);
 
     ArrayList<IImageDate> getFrameNumber();
 }

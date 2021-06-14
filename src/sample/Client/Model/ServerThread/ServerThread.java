@@ -2,7 +2,6 @@ package sample.Client.Model.ServerThread;
 
 import sample.Data.DataInterface.IGameData;
 import sample.Data.DataInterface.IUserData;
-import sample.Data.GameData;
 
 import java.io.*;
 import java.net.Socket;
@@ -60,6 +59,7 @@ public class ServerThread implements Runnable,IServerThread{
     public void run() {
         while (true) {
             try {
+                //Конвертирование данных в байты
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(bos);
                 oos.writeObject(userData);
@@ -78,8 +78,11 @@ public class ServerThread implements Runnable,IServerThread{
             }
 
             try {
+                //Размер допустимых получаемых данных
                 byte[] bts = new byte[in.available()];
+                //Попытка считывания
                 in.read(bts);
+
                 ByteArrayInputStream bis = new ByteArrayInputStream(bts);
                 ObjectInputStream ois = new ObjectInputStream(bis);
                 gameData = (IGameData) ois.readObject();
@@ -97,6 +100,8 @@ public class ServerThread implements Runnable,IServerThread{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+
         }
     }
 }

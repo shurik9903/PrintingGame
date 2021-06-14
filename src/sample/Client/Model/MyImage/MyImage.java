@@ -1,9 +1,8 @@
 package sample.Client.Model.MyImage;
 
 
-import javafx.scene.image.Image;
-import sample.Client.Model.ClientFactory.ClientFactory;
-import sample.Client.Model.ImageDate.IImageDate;
+import sample.Server.Model.ImageDate.IImageDate;
+import sample.Server.Model.ServerFactory.ServerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -11,14 +10,14 @@ import java.io.Serializable;
 //Класс изображение: дополнение наследуемого класса Image
 public class MyImage implements IMyImage, IImageDate, Serializable {
     @Serial
-    private static final long serialVersionUID = 6529685098267757692L;
+    private static final long serialVersionUID = 6529685098267757693L;
     protected String ImageName;
     protected IImageDate imageDate;
     protected boolean Type;
 
     //Конструктор
     public MyImage(String fileImageName, double Width,double Height, String ImageName, boolean Type) {
-        imageDate = ClientFactory.ImageDateCreateInstance(fileImageName, Width, Height);
+        imageDate = ServerFactory.ImageDateCreateInstance(fileImageName, Width, Height);
         this.ImageName = ImageName;
         this.Type = Type;
     }
@@ -48,13 +47,13 @@ public class MyImage implements IMyImage, IImageDate, Serializable {
     }
 
     @Override
-    public double getWidth() {
-        return imageDate.getWidth();
+    public double getImageWidth() {
+        return imageDate.getImageWidth();
     }
 
     @Override
-    public double getHeight() {
-        return imageDate.getHeight();
+    public double getImageHeight() {
+        return imageDate.getImageHeight();
     }
 
     @Override
@@ -62,10 +61,6 @@ public class MyImage implements IMyImage, IImageDate, Serializable {
         return imageDate.getFileImageName();
     }
 
-    @Override
-    public Image getImage() {
-        return imageDate.getImage();
-    }
 }
 
 

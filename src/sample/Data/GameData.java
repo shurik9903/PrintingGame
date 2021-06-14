@@ -1,6 +1,7 @@
 package sample.Data;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import sample.Data.DataInterface.*;
 import sample.Server.Model.ImageDate.IImageDate;
 import sample.Server.Model.MyImage.IMyImage;
@@ -45,13 +46,13 @@ public class GameData implements Serializable, IGameData {
     }
 
 
-    public static class MeteorData implements Serializable, IMeteorData {
+    public static class MeteorData implements Serializable, IMeteorData, ISpriteData {
 
         private ITextData Text;
         private ISpriteData spriteData;
 
-        public MeteorData(double PosX, double PosY, double rotation, IImageDate image, ITextData Text) {
-            spriteData = ServerFactory.SpriteDataCreateInstance(PosX, PosY, rotation, image);
+        public MeteorData(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file, ITextData Text) {
+            spriteData = ServerFactory.SpriteDataCreateInstance( PosX,  PosY,  rotation, ImageDataWidth,  ImageDataHeight,  file);
             this.Text = Text;
         }
 
@@ -68,14 +69,18 @@ public class GameData implements Serializable, IGameData {
 
         public double PosX, PosY;
         public double rotation;
-        public IImageDate image;
+        public double ImageDataWidth, ImageDataHeight;
+        public String file;
+
 
         //конуструктор
-        public SpriteData(double PosX, double PosY, double rotation, IImageDate image) {
+        public SpriteData(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file) {
             this.PosX = PosX;
             this.PosY = PosY;
             this.rotation = rotation;
-            this.image = image;
+            this.ImageDataWidth = ImageDataWidth;
+            this.ImageDataHeight = ImageDataHeight;
+            this.file = file;
         }
 
 
@@ -87,8 +92,8 @@ public class GameData implements Serializable, IGameData {
 
             gc.translate(PosX, PosY);
             gc.rotate(this.rotation);
-            gc.translate(-this.image.getWidth() / 2, -this.image.getHeight() / 2);
-            gc.drawImage(image.getImage(), 0, 0);
+            gc.translate(-ImageDataWidth / 2, -ImageDataHeight / 2);
+            gc.drawImage(new Image(file, ImageDataWidth, ImageDataHeight, false, false), 0, 0);
 
             gc.restore();
         }
@@ -128,15 +133,14 @@ public class GameData implements Serializable, IGameData {
 
             for (IImageDate i : this.FrameImage) {
                 gc.translate(+this.Width, 0);
-                gc.drawImage(i.getImage(), 0, 0);
+                gc.drawImage(new Image(i.getFileImageName(),i.getImageWidth(),i.getImageHeight(),false,false), 0, 0);
 
                 if (NumberCount < FrameNumber.size()) {
-                    gc.drawImage(this.FrameNumber.get(NumberCount).getImage(), 0, 0);
+                    gc.drawImage(new Image(FrameNumber.get(NumberCount).getFileImageName(),FrameNumber.get(NumberCount).getImageWidth(), FrameNumber.get(NumberCount).getImageHeight(),false,false ), 0, 0);
                     NumberCount++;
                 } else {
                     if (TextCount < TextLength) {
-                        gc.drawImage(this.FrameText.get(TextCount).get(0).getImage(), 0, 0);
-                        TextCount++;
+                        gc.drawImage(new Image(this.FrameText.get(TextCount).get(0).getFileImageName(), this.FrameText.get(TextCount).get(0).getImageWidth(),this.FrameText.get(TextCount).get(0).getImageHeight(), false, false), 0, 0);TextCount++;
                     }
                 }
             }
@@ -146,30 +150,31 @@ public class GameData implements Serializable, IGameData {
 
     }
 
-    public static class ProjectileData implements Serializable, IProjectileData{
+    public static class ProjectileData implements Serializable, IProjectileData, ISpriteData{
 
         private final ISpriteData spriteData;
         //Конструктор класса
-        public ProjectileData(double PosX, double PosY, double rotation, IImageDate image) {
-            spriteData = ServerFactory.SpriteDataCreateInstance(PosX, PosY, rotation, image);
+        public ProjectileData(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file) {
+            spriteData = ServerFactory.SpriteDataCreateInstance( PosX,  PosY,  rotation, ImageDataWidth,  ImageDataHeight, file);
         }
 
         @Override
-        public ISpriteData getSpriteData() {
-            return spriteData;
+        public void render(GraphicsContext gc) {
+            spriteData.render(gc);
         }
     }
 
-    public static class AimData implements Serializable, IAimData{
+    public static class AimData implements Serializable, IAimData, ISpriteData{
+
         private final ISpriteData spriteData;
         //Конструктор класса
-        public AimData(double PosX, double PosY, double rotation,IImageDate image) {
-            spriteData = ServerFactory.SpriteDataCreateInstance(PosX, PosY, rotation, image);
+        public AimData(double PosX, double PosY, double rotation,double ImageDataWidth, double ImageDataHeight, String file) {
+            spriteData = ServerFactory.SpriteDataCreateInstance( PosX,  PosY,  rotation, ImageDataWidth,  ImageDataHeight, file);
         }
 
         @Override
-        public ISpriteData getSpriteData() {
-            return spriteData;
+        public void render(GraphicsContext gc) {
+            spriteData.render(gc);
         }
     }
 
@@ -195,7 +200,7 @@ public class GameData implements Serializable, IGameData {
             if (FrameNumber != null)
                 for (IImageDate i : this.FrameNumber) {
                     gc.translate(+Size, 0);
-                    gc.drawImage(i.getImage(), 0, 0);
+                    gc.drawImage(new Image(i.getFileImageName(),i.getImageWidth(),i.getImageHeight(),false,false), 0, 0);
                 }
 
             gc.restore();

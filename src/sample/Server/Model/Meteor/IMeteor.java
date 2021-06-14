@@ -3,12 +3,8 @@ package sample.Server.Model.Meteor;
 import sample.Server.Model.Sprite.ISprite;
 import sample.Server.Model.TextToObject.ITextToObject;
 
-public interface IMeteor {
+public interface IMeteor extends ISprite, ITextToObject {
     int getID();
-
-    ITextToObject getTextObject();
-
-    ISprite getBasic();
 
     //Обновление объекта
     void update(double deltaTime);

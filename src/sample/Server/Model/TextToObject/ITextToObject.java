@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public interface ITextToObject {
     //Установка координат формы
-    void setCoordinate(double x, double y);
+    void setTextCoordinate(double x, double y);
 
     //Описание формы и текста
     void CreateFrame();
@@ -21,21 +21,21 @@ public interface ITextToObject {
 
     boolean isDestroy();
 
-    double getX();
+    double getTextX();
 
-    void setX(double x);
+    void setTextX(double x);
 
-    double getY();
+    double getTextY();
 
-    void setY(double y);
+    void setTextY(double y);
 
-    double getWidth();
+    double getTextWidth();
 
-    double getHeight();
+    double getTextHeight();
 
-    void setHeight(double height);
+    void setTextHeight(double height);
 
-    void setWidth(double width);
+    void setTextWidth(double width);
 
     ArrayList<IImageDate> getFrameImage();
 

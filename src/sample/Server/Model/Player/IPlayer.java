@@ -8,7 +8,7 @@ import sample.Server.Model.Sprite.ISprite;
 
 import java.util.ArrayList;
 
-public interface IPlayer {
+public interface IPlayer extends ISprite, IEnterToNumber, IPlayerAim{
     void setGameData(IGameData gameData);
 
     ArrayList<IProjectile> getProjectileList();
@@ -19,15 +19,10 @@ public interface IPlayer {
 
     int getEnergy();
 
-    IEnterToNumber getEnterNumber();
-
     void AddEnergy();
 
     void SubEnergy();
 
-    IAim getPlayerAim();
-
     IGameData getGameData();
 
-    ISprite getBasic();
 }

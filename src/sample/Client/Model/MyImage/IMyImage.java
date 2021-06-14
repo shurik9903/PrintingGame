@@ -1,8 +1,8 @@
 package sample.Client.Model.MyImage;
 
-import javafx.scene.image.Image;
+import sample.Server.Model.ImageDate.IImageDate;
 
-public interface IMyImage {
+public interface IMyImage extends IImageDate {
 
     void setName(String ImageName);
 
@@ -15,5 +15,4 @@ public interface IMyImage {
     //Получить тип
     boolean getType();
 
-    Image getImage();
 }

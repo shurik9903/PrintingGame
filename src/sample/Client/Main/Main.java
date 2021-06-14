@@ -14,7 +14,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-
+        //Создание главного окна
         Parent root = FXMLLoader.load(getClass().getResource("../Visual/GameWindow.fxml"));
         primaryStage.setTitle("Game");
         primaryStage.setScene(new Scene(root, 800, 600));
@@ -22,9 +22,6 @@ public class Main extends Application {
         primaryStage.show();
         //Фокусировка на объекта указанного в fxml для перехвата event-ов
         root.requestFocus();
-
-
-
     }
 
 

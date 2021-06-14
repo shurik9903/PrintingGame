@@ -1,5 +1,4 @@
 package sample.Data.DataInterface;
 
-public interface IProjectileData {
-    ISpriteData getSpriteData();
+public interface IProjectileData extends ISpriteData {
 }

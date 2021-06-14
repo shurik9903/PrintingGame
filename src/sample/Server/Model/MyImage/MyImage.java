@@ -49,13 +49,13 @@ public class MyImage implements IMyImage, IImageDate, Serializable {
     }
 
     @Override
-    public double getWidth() {
-        return imageDate.getWidth();
+    public double getImageWidth() {
+        return imageDate.getImageWidth();
     }
 
     @Override
-    public double getHeight() {
-        return imageDate.getHeight();
+    public double getImageHeight() {
+        return imageDate.getImageHeight();
     }
 
     @Override
@@ -63,10 +63,6 @@ public class MyImage implements IMyImage, IImageDate, Serializable {
         return imageDate.getFileImageName();
     }
 
-    @Override
-    public Image getImage() {
-        return imageDate.getImage();
-    }
 }
 
 

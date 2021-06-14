@@ -1,16 +1,18 @@
 package sample.Server.Model.Rectangle;
 
+import sample.Server.Model.Sprite.ISprite;
+
 public interface IRectangle {
 
-    double getX();
+    double getRecX();
 
-    double getY();
+    double getRecY();
 
-    double getWidth();
+    double getRecWidth();
 
-    double getHeight();
+    double getRecHeight();
 
-    void setPosition(double x, double y);
-    void setSize(double width, double height);
-    boolean overlaps(IRectangle other);
+    void setRecPosition(double x, double y);
+    void setRecSize(double width, double height);
+    boolean RecOverlaps(ISprite other);
 }

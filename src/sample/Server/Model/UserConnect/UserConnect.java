@@ -53,7 +53,6 @@ public class UserConnect implements Runnable,IUserConnect {
                 ObjectOutputStream oos = new ObjectOutputStream(bos);
                 oos.writeObject(player.getGameData());
                 oos.flush();
-                //System.out.println(player.getGameData().getMeteorList());
                 bts = bos.toByteArray();
                 out.write(bts);
 
@@ -77,8 +76,6 @@ public class UserConnect implements Runnable,IUserConnect {
                 Object obj = ois.readObject();
                 userData = (IUserData) obj;
 
-                //System.out.println("Access: " + userData.getUserName());
-                //System.out.println("User Key: " + userData.getKeyList());
                 player.setKeyList(userData.getKeyList());
                 ois.close();
                 bis.close();
