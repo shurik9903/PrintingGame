@@ -1,9 +1,10 @@
 package sample.Server.Model.TextToObject;
 
-import sample.Server.Model.ImageDate.IImageDate;
-import sample.Server.Model.ImageDate.ImageDate;
+import sample.Data.DataInterface.IImageDate;
+import sample.Data.GameDataFactory;
 import sample.Server.Model.MyImage.IMyImage;
 import sample.Server.Model.MyImage.MyImage;
+import sample.Server.Model.MyImage.MyImageFactory;
 import sample.Server.Model.ServerFactory.ServerFactory;
 
 import java.util.ArrayList;
@@ -43,9 +44,9 @@ public class TextToObject implements ITextToObject{
     //Описание формы и текста
     @Override
     public void CreateFrame() {
-        IImageDate FStart = ServerFactory.ImageDateCreateInstance("Image/R1.png", this.Width, this.Height);
-        IImageDate FEnd = ServerFactory.ImageDateCreateInstance("Image/R3.png", this.Width, this.Height);
-        IImageDate FMiddle = ServerFactory.ImageDateCreateInstance("Image/R2.png", this.Width, this.Height);
+        IImageDate FStart = GameDataFactory.ImageDateCreateInstance("Image/R1.png", this.Width, this.Height);
+        IImageDate FEnd = GameDataFactory.ImageDateCreateInstance("Image/R3.png", this.Width, this.Height);
+        IImageDate FMiddle = GameDataFactory.ImageDateCreateInstance("Image/R2.png", this.Width, this.Height);
 
         this.FrameImage = new ArrayList<>();
         this.FrameImage.add(FStart);
@@ -56,14 +57,14 @@ public class TextToObject implements ITextToObject{
 
         FrameNumber = new ArrayList<>();
         for (Character i : String.valueOf(MeteorID).toCharArray())
-            FrameNumber.add(ServerFactory.ImageDateCreateInstance("Image/NumberImage/" + i + ".png", this.Width, this.Height));
+            FrameNumber.add(GameDataFactory.ImageDateCreateInstance("Image/NumberImage/" + i + ".png", this.Width, this.Height));
 
         this.FrameText = new ArrayList<>();
         for (Character i : this.Text.toCharArray()) {
             this.FrameText.add(new ArrayList<>());
-            FrameText.get(FrameText.size() - 1).add(ServerFactory.MyImageCreateInstance("Image/TextImage/" + i + "unbroken.png",
+            FrameText.get(FrameText.size() - 1).add(MyImageFactory.CreateInstance("Image/TextImage/" + i + "unbroken.png",
                     this.Width, this.Height, i.toString(), false));
-            FrameText.get(FrameText.size() - 1).add(ServerFactory.MyImageCreateInstance("Image/TextImage/" + i + "broken.png",
+            FrameText.get(FrameText.size() - 1).add(MyImageFactory.CreateInstance("Image/TextImage/" + i + "broken.png",
                     this.Width, this.Height, i.toString(), true));
 
 

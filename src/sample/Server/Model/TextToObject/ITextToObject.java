@@ -1,9 +1,7 @@
 package sample.Server.Model.TextToObject;
 
-import sample.Server.Model.ImageDate.IImageDate;
-import sample.Server.Model.ImageDate.ImageDate;
+import sample.Data.DataInterface.IImageDate;
 import sample.Server.Model.MyImage.IMyImage;
-import sample.Server.Model.MyImage.MyImage;
 
 import java.util.ArrayList;
 

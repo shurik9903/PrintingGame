@@ -1,6 +1,6 @@
 package sample.Server.Model.EnterToNumber;
 
-import sample.Server.Model.ImageDate.IImageDate;
+import sample.Data.DataInterface.IImageDate;
 
 import java.util.ArrayList;
 

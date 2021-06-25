@@ -1,4 +1,6 @@
-package sample.Client.Model.ImageDate;
+package sample.Data.DataInterface;
+
+import javafx.scene.image.Image;
 
 public interface IImageDate {
     double getImageWidth();

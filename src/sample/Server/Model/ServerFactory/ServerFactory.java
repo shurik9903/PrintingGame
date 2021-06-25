@@ -1,44 +1,90 @@
 package sample.Server.Model.ServerFactory;
 
 import sample.Data.*;
-import sample.Data.DataInterface.*;
-import sample.Server.Model.Aim.Aim;
-import sample.Server.Model.Aim.IAim;
-import sample.Server.Model.EnterToNumber.EnterToNumber;
-import sample.Server.Model.EnterToNumber.IEnterToNumber;
-import sample.Server.Model.GameOptions.GameOptions;
-import sample.Server.Model.GameOptions.IGameOptions;
-import sample.Server.Model.IModel;
-import sample.Server.Model.ImageDate.IImageDate;
-import sample.Server.Model.ImageDate.ImageDate;
-import sample.Server.Model.Meteor.IMeteor;
-import sample.Server.Model.Meteor.Meteor;
-import sample.Server.Model.Model;
-import sample.Server.Model.MyFunction.IMyFunction;
-import sample.Server.Model.MyFunction.MyFunction;
-import sample.Server.Model.MyImage.IMyImage;
-import sample.Server.Model.MyImage.MyImage;
-import sample.Server.Model.Player.IPlayer;
-import sample.Server.Model.Player.IPlayerAim;
-import sample.Server.Model.Player.Player;
-import sample.Server.Model.Player.PlayerAim;
-import sample.Server.Model.Projectile.IProjectile;
-import sample.Server.Model.Projectile.Projectile;
-import sample.Server.Model.Rectangle.IRectangle;
-import sample.Server.Model.Rectangle.Rectangle;
-import sample.Server.Model.Sprite.ISprite;
-import sample.Server.Model.Sprite.Sprite;
-import sample.Server.Model.TextToObject.ITextToObject;
-import sample.Server.Model.TextToObject.TextToObject;
-import sample.Server.Model.UserConnect.IUserConnect;
-import sample.Server.Model.UserConnect.UserConnect;
-import sample.Server.Model.Vector.*;
-
-import java.net.Socket;
-import java.util.ArrayList;
+import sample.Server.Model.Aim.AimFactory;
+import sample.Server.Model.EnterToNumber.EnterToNumberFactory;
+import sample.Server.Model.GameOptions.GameOptionsFactory;
+import sample.Server.Model.Meteor.MeteorFactory;
+import sample.Server.Model.ModelFactory;
+import sample.Server.Model.MyFunction.MyFunctionFactory;
+import sample.Server.Model.MyImage.MyImageFactory;
+import sample.Server.Model.Player.PlayerAimFactory;
+import sample.Server.Model.Player.PlayerFactory;
+import sample.Server.Model.Projectile.ProjectileFactory;
+import sample.Server.Model.Rectangle.RectangleFactory;
+import sample.Server.Model.Sprite.SpriteFactory;
+import sample.Server.Model.TextToObject.TextToObjectFactory;
+import sample.Server.Model.UserConnect.UserConnectFactory;
+import sample.Server.Model.Vector.VectorFactory;
+import sample.Server.Model.Vector.VectorPositionFactory;
+import sample.Server.Model.Vector.VectorVelocityFactory;
 
 public class ServerFactory{
 
+    public static Object ClassFactory(String ClassName){
+
+        switch (ClassName) {
+            case "IVecVel" -> {
+                return new VectorVelocityFactory();
+            }
+            case "IVecPos" -> {
+                return new VectorPositionFactory();
+            }
+            case "IModel" -> {
+                return new ModelFactory();
+            }
+            case "IProjectile" -> {
+                return new ProjectileFactory();
+            }
+            case "IPlayer" -> {
+                return new PlayerFactory();
+            }
+            case "IMeteor" -> {
+                return new MeteorFactory();
+            }
+            case "IGameOptions" -> {
+                return new GameOptionsFactory();
+            }
+            case "IUserConnect" -> {
+                return new UserConnectFactory();
+            }
+            case "IEnterToNumber" -> {
+                return new EnterToNumberFactory();
+            }
+            case "IGameData" -> {
+                return new GameDataFactory();
+            }
+            case "IMyFunction" -> {
+                return new MyFunctionFactory();
+            }
+            case "IPlayerAim" -> {
+                return new PlayerAimFactory();
+            }
+            case "IAim" -> {
+                return new AimFactory();
+            }
+            case "ITextToObject" -> {
+                return new TextToObjectFactory();
+            }
+            case "IMyImage" -> {
+                return new MyImageFactory();
+            }
+            case "IRectangle" -> {
+                return new RectangleFactory();
+            }
+            case "ISprite" -> {
+                return new SpriteFactory();
+            }
+            case "IVector" -> {
+                return new VectorFactory();
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    /*
     public static IVecVel VecVelCreateInstance() {
         return new VecVel();
     }
@@ -146,16 +192,16 @@ public class ServerFactory{
     }
 
     public static IImageDate ImageDateCreateInstance(String fileImageName, double sizeImage) {
-        return new ImageDate(fileImageName,sizeImage);
+        return new GameData.ImageDate(fileImageName,sizeImage);
     }
 
     public static IImageDate ImageDateCreateInstance(String fileImageName, double Width, double Height) {
-        return new ImageDate(fileImageName,Width,Height);
+        return new GameData.ImageDate(fileImageName,Width,Height);
 
     }
 
     public static IImageDate ImageDateCreateInstance(String fileImageName) {
-        return new ImageDate(fileImageName);
+        return new GameData.ImageDate(fileImageName);
     }
 
     public static IRectangle RectangleCreateInstance() {
@@ -189,4 +235,6 @@ public class ServerFactory{
     public static IVector VectorCreateInstance(double x, double y) {
         return new Vector(x,y);
     }
+
+     */
 }

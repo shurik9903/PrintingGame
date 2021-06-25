@@ -1,8 +1,10 @@
 package sample.Server.Model.Player;
 
 import javafx.scene.image.Image;
+import sample.Server.Model.Aim.AimFactory;
 import sample.Server.Model.Aim.IAim;
 import sample.Server.Model.Meteor.IMeteor;
+import sample.Server.Model.Rectangle.IRectangle;
 import sample.Server.Model.ServerFactory.ServerFactory;
 import sample.Server.Model.Sprite.ISprite;
 
@@ -13,7 +15,7 @@ public class PlayerAim implements IPlayerAim{
     private final IAim aim;
 
     public PlayerAim(double BoxWidth, double BoxHeight, double RestrictedArea){
-        aim = ServerFactory.AimCreateInstance(BoxWidth,BoxHeight,RestrictedArea);
+        aim = AimFactory.CreateInstance(BoxWidth,BoxHeight,RestrictedArea);
     }
 
     @Override
@@ -46,11 +48,6 @@ public class PlayerAim implements IPlayerAim{
     @Override
     public void setPlayerAimImage(String fileImageName) {
         aim.setImage(fileImageName);
-    }
-
-    @Override
-    public boolean PlayerAimOverlaps(ISprite other) {
-        return aim.overlaps(other);
     }
 
     @Override
@@ -130,7 +127,7 @@ public class PlayerAim implements IPlayerAim{
     }
 
     @Override
-    public boolean PlayerAimRecOverlaps(ISprite other) {
+    public boolean PlayerAimRecOverlaps(IRectangle other) {
         return aim.RecOverlaps(other);
     }
 

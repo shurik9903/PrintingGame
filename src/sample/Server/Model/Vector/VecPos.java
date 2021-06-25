@@ -6,13 +6,13 @@ public class VecPos implements IVecPos {
     private final IVector IV;
 
     public VecPos() {
-        IV = ServerFactory.VectorCreateInstance();
+        IV = VectorFactory.CreateInstance();
         this.PosSet(0,0);
 
     }
 
     public VecPos(double x, double y) {
-        IV = ServerFactory.VectorCreateInstance();
+        IV = VectorFactory.CreateInstance();
         this.PosSet(x, y);
     }
 

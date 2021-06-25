@@ -1,14 +1,14 @@
 package sample.Server.Model.Meteor;
 
-import javafx.scene.image.Image;
-import sample.Server.Model.ImageDate.IImageDate;
-import sample.Server.Model.MyFunction.MyFunction;
+import sample.Data.DataInterface.IImageDate;
+import sample.Server.Model.MyFunction.MyFunctionFactory;
 import sample.Server.Model.MyImage.IMyImage;
+import sample.Server.Model.Rectangle.IRectangle;
 import sample.Server.Model.ServerFactory.ServerFactory;
 import sample.Server.Model.Sprite.ISprite;
-import sample.Server.Model.Sprite.Sprite;
+import sample.Server.Model.Sprite.SpriteFactory;
 import sample.Server.Model.TextToObject.ITextToObject;
-import sample.Server.Model.TextToObject.TextToObject;
+import sample.Server.Model.TextToObject.TextToObjectFactory;
 
 import java.util.ArrayList;
 
@@ -22,17 +22,17 @@ public class Meteor implements IMeteor, ISprite, ITextToObject{
     private boolean Fall = false;
 
     public Meteor(double BoxHeight, double BoxWidth, int ID, int speed) {
-        basic = ServerFactory.SpriteCreateInstance("Image/Asteroid.png", ServerFactory.MyFunctionCreateInstance().getRandomNumber(50, 150));
+        basic = SpriteFactory.CreateInstance("Image/Asteroid.png", MyFunctionFactory.CreateInstance().getRandomNumber(50, 150));
         this.BoxHeight = BoxHeight;
         this.BoxWidth = BoxWidth;
-        PosSet(ServerFactory.MyFunctionCreateInstance().getRandomNumber(-200, (int) BoxWidth + 200), -100);
+        PosSet(MyFunctionFactory.CreateInstance().getRandomNumber(-200, (int) BoxWidth + 200), -100);
         setVelLength(speed);
         setRotation(setFall());
         this.ID = ID;
         setVelAngle(getRotation());
         setRecSize(20, 20);
-        Text = ServerFactory.TextToObjectCreateInstance(getPosX(), getPosY() + getImageHeight() / 2,
-                25, 25, ServerFactory.MyFunctionCreateInstance().getRandomWord(), ID);
+        Text = TextToObjectFactory.CreateInstance(getPosX(), getPosY() + getImageHeight() / 2,
+                25, 25, MyFunctionFactory.CreateInstance().getRandomWord(), ID);
     }
 
     //Угол падения между случайным минимальным и максимальным углом
@@ -41,13 +41,13 @@ public class Meteor implements IMeteor, ISprite, ITextToObject{
         if (getPosX() <= BoxWidth / 2) {
             //Если метеорит появится близко к границе или за границей окна
             if (getPosX() < BoxWidth * 0.2) {
-                return 90 - ServerFactory.MyFunctionCreateInstance().getRandomNumber(
+                return 90 - MyFunctionFactory.CreateInstance().getRandomNumber(
                         (int) getPosAngle2Vectors(getPosX(), BoxHeight,
                                 BoxWidth / 2, BoxHeight),
                         (int) getPosAngle2Vectors(getPosX(), BoxHeight,
                                 BoxWidth, BoxHeight));
             } else {
-                return 90 - ServerFactory.MyFunctionCreateInstance().getRandomNumber(
+                return 90 - MyFunctionFactory.CreateInstance().getRandomNumber(
                         -(int) getPosAngle2Vectors(getPosX(), BoxHeight,
                                 0, BoxHeight),
                         (int) getPosAngle2Vectors(getPosX(), BoxHeight,
@@ -55,13 +55,13 @@ public class Meteor implements IMeteor, ISprite, ITextToObject{
             }
         } else {
             if (getPosX() > BoxWidth - BoxWidth * 0.2) {
-                return 90 + ServerFactory.MyFunctionCreateInstance().getRandomNumber(
+                return 90 + MyFunctionFactory.CreateInstance().getRandomNumber(
                         (int) getPosAngle2Vectors(getPosX(), BoxHeight,
                                 BoxWidth / 2, BoxHeight),
                         (int) getPosAngle2Vectors(getPosX(), BoxHeight,
                                 0, BoxHeight));
             } else {
-                return 90 + ServerFactory.MyFunctionCreateInstance().getRandomNumber(
+                return 90 + MyFunctionFactory.CreateInstance().getRandomNumber(
                         -(int) getPosAngle2Vectors(getPosX(), BoxHeight,
                                 BoxWidth, BoxHeight),
                         (int) getPosAngle2Vectors(getPosX(), BoxHeight,
@@ -88,11 +88,6 @@ public class Meteor implements IMeteor, ISprite, ITextToObject{
     @Override
     public void setImage(String fileImageName) {
         basic.setImage(fileImageName);
-    }
-
-    @Override
-    public boolean overlaps(ISprite other) {
-        return false;
     }
 
     @Override
@@ -170,7 +165,7 @@ public class Meteor implements IMeteor, ISprite, ITextToObject{
     }
 
     @Override
-    public boolean RecOverlaps(ISprite other) {
+    public boolean RecOverlaps(IRectangle other) {
         return basic.RecOverlaps(other);
     }
 

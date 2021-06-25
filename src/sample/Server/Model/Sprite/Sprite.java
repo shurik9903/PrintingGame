@@ -2,13 +2,15 @@ package sample.Server.Model.Sprite;
 
 import javafx.geometry.Point2D;
 
-import javafx.scene.image.Image;
-import sample.Server.Model.ImageDate.IImageDate;
+import sample.Data.DataInterface.IImageDate;
+import sample.Data.GameDataFactory;
+import sample.Server.Model.Rectangle.RectangleFactory;
 import sample.Server.Model.ServerFactory.ServerFactory;
 import sample.Server.Model.Rectangle.IRectangle;
 import sample.Server.Model.Vector.IVecPos;
 import sample.Server.Model.Vector.IVecVel;
-
+import sample.Server.Model.Vector.VectorPositionFactory;
+import sample.Server.Model.Vector.VectorVelocityFactory;
 
 
 //Класс обекта: Содержит описание объекта
@@ -23,46 +25,43 @@ public class Sprite implements ISprite, IVecPos, IVecVel, IRectangle, IImageDate
     //конуструктор
     public Sprite() {
         this.rotation = 0;
-        this.position =  ServerFactory.VecPosCreateInstance();
-        this.velocity =  ServerFactory.VecVelCreateInstance();
-        this.boundary =  ServerFactory.RectangleCreateInstance();
+        this.position =  VectorPositionFactory.CreateInstance();
+        this.velocity =  VectorVelocityFactory.CreateInstance();
+        this.boundary =  RectangleFactory.CreateInstance();
     }
 
     public Sprite(String fileImageName, double sizeImage) {
         this();
-        this.image = ServerFactory.ImageDateCreateInstance(fileImageName, sizeImage);
+        this.image = GameDataFactory.ImageDateCreateInstance(fileImageName, sizeImage);
+        setRecSize(image.getImageWidth(),getImageHeight());
     }
 
     public Sprite(String fileImageName) {
         this();
-        this.image = ServerFactory.ImageDateCreateInstance(fileImageName);
+        this.image = GameDataFactory.ImageDateCreateInstance(fileImageName);
+        setRecSize(image.getImageWidth(),getImageHeight());
     }
 
     public Sprite(String fileImageName, double Width, double Height) {
         this();
-        this.image = ServerFactory.ImageDateCreateInstance(fileImageName, Width, Height);
+        this.image = GameDataFactory.ImageDateCreateInstance(fileImageName, Width, Height);
+        setRecSize(image.getImageWidth(),getImageHeight());
     }
 
     //установка изображения
     @Override
     public void setImage(String fileImageName, double sizeImage) {
-        this.image = ServerFactory.ImageDateCreateInstance(fileImageName, sizeImage, sizeImage);
+        this.image = GameDataFactory.ImageDateCreateInstance(fileImageName, sizeImage, sizeImage);
     }
 
     @Override
     public void setImage(String fileImageName, double Width, double Height) {
-        this.image = ServerFactory.ImageDateCreateInstance(fileImageName, Width, Height);
+        this.image = GameDataFactory.ImageDateCreateInstance(fileImageName, Width, Height);
     }
 
     @Override
     public void setImage(String fileImageName) {
-        this.image = ServerFactory.ImageDateCreateInstance(fileImageName);
-    }
-
-    //Расчет соприкосновение с другим объектом
-    @Override
-    public boolean overlaps(ISprite other) {
-        return this.RecOverlaps(other);
+        this.image = GameDataFactory.ImageDateCreateInstance(fileImageName);
     }
 
     //Получение угла поворота до объекта
@@ -81,6 +80,7 @@ public class Sprite implements ISprite, IVecPos, IVecVel, IRectangle, IImageDate
     @Override
     public void update(double deltaTime) {
         this.PosAdd(this.getVelX() * deltaTime, this.getVelX() * deltaTime);
+        //setRecPosition(getPosX(),getPosY());
     }
 
     @Override
@@ -125,7 +125,7 @@ public class Sprite implements ISprite, IVecPos, IVecVel, IRectangle, IImageDate
     }
 
     @Override
-    public boolean RecOverlaps(ISprite other) {
+    public boolean RecOverlaps(IRectangle other) {
         return boundary.RecOverlaps(other);
     }
 

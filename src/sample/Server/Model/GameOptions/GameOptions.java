@@ -2,7 +2,9 @@ package sample.Server.Model.GameOptions;
 
 import sample.Server.Model.Meteor.IMeteor;
 import sample.Server.Model.Meteor.Meteor;
+import sample.Server.Model.Meteor.MeteorFactory;
 import sample.Server.Model.MyFunction.MyFunction;
+import sample.Server.Model.MyFunction.MyFunctionFactory;
 import sample.Server.Model.ServerFactory.ServerFactory;
 
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class GameOptions implements IGameOptions{
 
     @Override
     public void setPeriod(){
-        Period = ServerFactory.MyFunctionCreateInstance().getRandomNumber(3 - Difficulty * 2, 7 - Difficulty * 2);
+        Period = MyFunctionFactory.CreateInstance().getRandomNumber(3 - Difficulty * 2, 7 - Difficulty * 2);
     }
 
     @Override
@@ -54,8 +56,8 @@ public class GameOptions implements IGameOptions{
     public void GameProcess(ArrayList<IMeteor> MeteorList){
         TotalTime += 1./100;
         if (MeteorSpawnCheck() && MeteorsSpawn < MeteorsCount) {
-            MeteorList.add(ServerFactory.MeteorCreateInstance(GamePanelSizeY, GamePanelSizeX, ServerFactory.MyFunctionCreateInstance().setID(MeteorList),
-                    ServerFactory.MyFunctionCreateInstance().getRandomNumber(Difficulty * 10, 30 + Difficulty * 20)));
+            MeteorList.add(MeteorFactory.CreateInstance(GamePanelSizeY, GamePanelSizeX, MyFunctionFactory.CreateInstance().setID(MeteorList),
+                    MyFunctionFactory.CreateInstance().getRandomNumber(Difficulty * 10, 30 + Difficulty * 20)));
             MeteorsSpawn++;
         }
     }

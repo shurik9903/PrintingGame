@@ -1,6 +1,6 @@
 package sample.Client.Model.MyImage;
 
-import sample.Server.Model.ImageDate.IImageDate;
+import sample.Data.DataInterface.IImageDate;
 
 public interface IMyImage extends IImageDate {
 

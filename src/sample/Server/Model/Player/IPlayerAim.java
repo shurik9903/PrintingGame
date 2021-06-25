@@ -2,6 +2,7 @@ package sample.Server.Model.Player;
 
 import javafx.scene.image.Image;
 import sample.Server.Model.Meteor.IMeteor;
+import sample.Server.Model.Rectangle.IRectangle;
 import sample.Server.Model.Sprite.ISprite;
 
 import java.util.ArrayList;
@@ -20,8 +21,6 @@ public interface IPlayerAim {
     void setPlayerAimImage(String fileImageName, double Width, double Height);
 
     void setPlayerAimImage(String fileImageName);
-
-    boolean PlayerAimOverlaps(ISprite other);
 
     double getPlayerAimAngleToTarget(ISprite other);
 
@@ -54,7 +53,7 @@ public interface IPlayerAim {
 
     void setPlayerAimRecSize(double width, double height);
 
-    boolean PlayerAimRecOverlaps(ISprite other);
+    boolean PlayerAimRecOverlaps(IRectangle other);
 
     double getPlayerAimPosX();
 

@@ -6,6 +6,7 @@ import sample.Server.Model.Meteor.Meteor;
 import sample.Server.Model.Rectangle.IRectangle;
 import sample.Server.Model.ServerFactory.ServerFactory;
 import sample.Server.Model.Sprite.ISprite;
+import sample.Server.Model.Sprite.SpriteFactory;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class Aim implements IAim, ISprite{
     //Конструктор класса
     public Aim(double BoxWidth, double BoxHeight, double RestrictedArea) {
 
-        basic = ServerFactory.SpriteCreateInstance("Image/Aim.png", 100);
+        basic = SpriteFactory.CreateInstance("Image/Aim.png", 100);
         this.BoxWidth = BoxWidth;
         this.BoxHeight = BoxHeight;
         setRecSize(10, 10);
@@ -88,10 +89,11 @@ public class Aim implements IAim, ISprite{
         if (TargetMeteor.isDestroy() || TargetMeteor.getPosY() >= RestrictedArea) {
             TargetCaught = false;
             TargetMeteor = null;
+
             return;
         }
 
-        if (this.basic.overlaps(TargetMeteor))
+        if (basic.RecOverlaps(TargetMeteor))
             TargetCaught = true;
 
         if (TargetCaught) {
@@ -101,7 +103,8 @@ public class Aim implements IAim, ISprite{
             return;
         }
 
-        setVelAngle(basic.getAngleToTarget(TargetMeteor));
+
+        setVelAngle(getAngleToTarget(TargetMeteor));
     }
 
     @Override
@@ -119,10 +122,6 @@ public class Aim implements IAim, ISprite{
         basic.setImage(fileImageName);
     }
 
-    @Override
-    public boolean overlaps(ISprite other) {
-        return basic.overlaps(other);
-    }
 
     @Override
     public double getAngleToTarget(ISprite other) {
@@ -203,7 +202,7 @@ public class Aim implements IAim, ISprite{
     }
 
     @Override
-    public boolean RecOverlaps(ISprite other) {
+    public boolean RecOverlaps(IRectangle other) {
         return basic.RecOverlaps(other);
     }
 

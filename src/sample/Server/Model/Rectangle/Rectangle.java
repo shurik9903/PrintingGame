@@ -57,7 +57,7 @@ public class Rectangle implements IRectangle{
 
     //Проверка на пересечение с другим прямоугольником
     @Override
-    public boolean RecOverlaps(ISprite other) {
+    public boolean RecOverlaps(IRectangle other) {
         boolean noOverlaps = this.x + this.Width < other.getRecX() ||
                 other.getRecX() + other.getRecWidth() < this.x ||
                 this.y + this.Height < other.getRecY() ||

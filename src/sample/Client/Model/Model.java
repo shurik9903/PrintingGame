@@ -1,10 +1,11 @@
 package sample.Client.Model;
 
-import sample.Client.Model.ClientFactory.ClientFactory;
+import sample.Client.Model.Gif.GifFactory;
 import sample.Client.Model.Gif.IGif;
 import sample.Client.Model.ServerThread.IServerThread;
+import sample.Client.Model.ServerThread.ServerThreadFactory;
 import sample.Data.DataInterface.*;
-import sample.Data.UserData;
+import sample.Data.GameDataFactory;
 
 import java.net.Socket;
 import javafx.animation.AnimationTimer;
@@ -21,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Model implements IModel{
-    IGameData GD = ClientFactory.GameDataCreateInstance();
+    IGameData GD = GameDataFactory.GameDataCreateInstance();
     IServerThread server = null;
     public Model() {
     }
@@ -44,11 +45,11 @@ public class Model implements IModel{
         ArrayList<IGif> EnergyGifList = new ArrayList<>();
 
         for (Node IV : HBEnergy.getChildren())
-            EnergyGifList.add(ClientFactory.GifCreateInstance("Aim", (ImageView) IV, 2));
+            EnergyGifList.add(GifFactory.CreateInstance("Aim", (ImageView) IV, 2));
 
         //Список нажатых клавишь
         ArrayList<String> KeyList = new ArrayList<>();
-        IUserData userData = ClientFactory.UserDataCreateInstance("User1", KeyList);
+        IUserData userData = GameDataFactory.UserDataCreateInstance("User1", KeyList);
 
 
         try{
@@ -56,7 +57,7 @@ public class Model implements IModel{
             System.out.println("Local port: " +  s.getLocalPort());
             System.out.println("Remote port: " + s.getPort());
 
-            server = ClientFactory.ServerThreadCreateInstance(s, userData);
+            server = ServerThreadFactory.CreateInstance(s, userData);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }

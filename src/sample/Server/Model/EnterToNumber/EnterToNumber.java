@@ -1,9 +1,7 @@
 package sample.Server.Model.EnterToNumber;
 
-import sample.Server.Model.ImageDate.IImageDate;
-import sample.Server.Model.ImageDate.ImageDate;
-import sample.Server.Model.Player.IPlayer;
-import sample.Server.Model.Player.Player;
+import sample.Data.GameData;
+import sample.Data.DataInterface.IImageDate;
 
 import java.util.ArrayList;
 
@@ -47,7 +45,7 @@ public class EnterToNumber implements IEnterToNumber{
     public void initialize() {
         FrameNumber = new ArrayList<>();
         for (Character i : String.valueOf(Numbers).toCharArray())
-            FrameNumber.add(new ImageDate("Image/NumberImage/" + i + ".png", Width, Height));
+            FrameNumber.add(new GameData.ImageDate("Image/NumberImage/" + i + ".png", Width, Height));
 
     }
 

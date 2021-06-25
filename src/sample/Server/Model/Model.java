@@ -2,13 +2,21 @@ package sample.Server.Model;
 
 import javafx.geometry.Point2D;
 import sample.Data.DataInterface.*;
+import sample.Data.GameDataFactory;
+import sample.Server.Model.GameOptions.GameOptionsFactory;
 import sample.Server.Model.GameOptions.IGameOptions;
 import sample.Server.Model.Meteor.IMeteor;
+
+import sample.Server.Model.MyFunction.MyFunctionFactory;
 import sample.Server.Model.Player.IPlayer;
+import sample.Server.Model.Player.PlayerFactory;
 import sample.Server.Model.Projectile.IProjectile;
-import sample.Server.Model.ServerFactory.ServerFactory;
+import sample.Server.Model.Projectile.ProjectileFactory;
+
 import sample.Server.Model.TextToObject.ITextToObject;
 import sample.Server.Model.UserConnect.IUserConnect;
+import sample.Server.Model.UserConnect.UserConnectFactory;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -33,7 +41,7 @@ public class Model implements IModel {
                 NumberToUsers++;
                 System.out.println("Client join");
                 if (NumberToUsers > 0 && NumberToUsers <= 2) {
-                    Users.add(ServerFactory.UserConnectCreateInstance("User" + NumberToUsers, s, this));
+                    Users.add(UserConnectFactory.CreateInstance("User" + NumberToUsers, s, this));
                     System.out.println("Local port: " + s.getLocalPort());
                     System.out.println("Remote port: " + s.getPort());
                 }
@@ -64,14 +72,14 @@ public class Model implements IModel {
 
     @Override
     public IPlayer setPlayer1() {
-        Player1 = ServerFactory.PlayerCreateInstance(150, WindowWidth/6, WindowHeight - 100);
+        Player1 = PlayerFactory.CreateInstance(150, WindowWidth/6, WindowHeight - 100);
         AllPlayer.add(Player1);
         return Player1;
     }
 
     @Override
     public IPlayer setPlayer2() {
-        Player2 = ServerFactory.PlayerCreateInstance(150, WindowWidth-WindowWidth/6, WindowHeight - 100);
+        Player2 = PlayerFactory.CreateInstance(150, WindowWidth-WindowWidth/6, WindowHeight - 100);
         AllPlayer.add(Player2);
         return Player2;
     }
@@ -100,7 +108,7 @@ public class Model implements IModel {
         double deltaTime = 1. / 24;
 
         //Описание настроек игры
-        Game = ServerFactory.GameOptionsCreateInstance(1, 10, WindowWidth, WindowHeight);
+        Game = GameOptionsFactory.CreateInstance(1, 10, WindowWidth, WindowHeight);
 
         //Создание списка метеоритов
         ArrayList<IMeteor> MeteorList = new ArrayList<>();
@@ -116,9 +124,9 @@ public class Model implements IModel {
 
                 for (IPlayer player : AllPlayer) {
 
-                    if (ServerFactory.MyFunctionCreateInstance().IndexNumber(player.getKeyList()) != -1) {
+                    if (MyFunctionFactory.CreateInstance().IndexNumber(player.getKeyList()) != -1) {
                         player.addNumber(player.getKeyList().get(0).toCharArray()[0]);
-                        player.getKeyList().remove(ServerFactory.MyFunctionCreateInstance().IndexNumber(player.getKeyList()));
+                        player.getKeyList().remove(MyFunctionFactory.CreateInstance().IndexNumber(player.getKeyList()));
                     }
 
                     //Действие при нажатии правого альта
@@ -139,16 +147,16 @@ public class Model implements IModel {
                     }
 
                     //Действие при вводе буквы
-                    if (ServerFactory.MyFunctionCreateInstance().IndexRusEng(player.getKeyList()) != -1) {
+                    if (MyFunctionFactory.CreateInstance().IndexRusEng(player.getKeyList()) != -1) {
                         if (player.getPlayerAimTargetMeteor() != null &&
                                 player.getPlayerAimTargetCaught() &&
-                                !player.getPlayerAimTargetMeteor().overlaps(player) && player.getEnergy() != 0) {
-                            player.getProjectileList().add(ServerFactory.ProjectileCreateInstance(
+                                !player.getPlayerAimTargetMeteor().RecOverlaps(player) && player.getEnergy() != 0) {
+                            player.getProjectileList().add(ProjectileFactory.CreateInstance(
                                     player, player.getKeyList().get(0).toCharArray()[0],
                                     WindowHeight, WindowWidth, player.getPlayerAimTargetMeteor()));
                             player.SubEnergy();
                         }
-                        player.getKeyList().remove(ServerFactory.MyFunctionCreateInstance().IndexRusEng(player.getKeyList()));
+                        player.getKeyList().remove(MyFunctionFactory.CreateInstance().IndexRusEng(player.getKeyList()));
                     }
 
                     //Убавление энергии пушки
@@ -207,20 +215,21 @@ public class Model implements IModel {
                     }
 
 
-                    for (IProjectile projectile : player.getProjectileList())
-                        projectileData.add(ServerFactory.ProjectileDataCreateInstance(projectile.getPosX(), projectile.getPosY(),
-                                projectile.getRotation(), projectile.getImageWidth(),projectile.getImageHeight(),projectile.getFileImageName()));
+                    for (IProjectile projectile : player.getProjectileList()) {
+                        projectileData.add(GameDataFactory.ProjectileDataCreateInstance(projectile.getPosX(), projectile.getPosY(),
+                                projectile.getRotation(), projectile.getImageWidth(), projectile.getImageHeight(), projectile.getFileImageName()));
+                        //System.out.println(projectile.getRotation());
+                    }
 
-
-                    GunData.add(ServerFactory.SpriteDataCreateInstance(player.getPosX(),
+                    GunData.add(GameDataFactory.SpriteDataCreateInstance(player.getPosX(),
                             player.getPosY(), player.getRotation(), player.getImageWidth(),player.getImageHeight(),player.getFileImageName()));
-                    aimData.add(ServerFactory.AimDataCreateInstance(player.getPlayerAimPosX(), player.getPlayerAimPosY(),
+                    aimData.add(GameDataFactory.AimDataCreateInstance(player.getPlayerAimPosX(), player.getPlayerAimPosY(),
                             player.getPlayerAimRotation(), player.getPlayerAimImageWidth(),player.getPlayerAimImageHeight(),player.getPlayerAimFileImageName()));
                 }
 
                 for (IPlayer player : AllPlayer) {
-                    IEnterToNumberData enterToNumberData = ServerFactory.EnterToNumberDataCreateInstance(player.getEntNumX(), player.getEntNumY(), player.getEntNumWidth(), player.getFrameNumber());
-                    player.setGameData(ServerFactory.GameDataCreateInstance(Game.getScore(), GunData, Game.getGameStop(), meteorDataList, projectileData, aimData, enterToNumberData));
+                    IEnterToNumberData enterToNumberData = GameDataFactory.EnterToNumberDataCreateInstance(player.getEntNumX(), player.getEntNumY(), player.getEntNumWidth(), player.getFrameNumber());
+                    player.setGameData(GameDataFactory.GameDataCreateInstance(Game.getScore(), GunData, Game.getGameStop(), meteorDataList, projectileData, aimData, enterToNumberData));
 
                 }
 
@@ -235,9 +244,9 @@ public class Model implements IModel {
 
     @Override
     public IMeteorData ConvertMeteorToData(IMeteor meteor){
-        return ServerFactory.MeteorDataCreateInstance(meteor.getPosX(), meteor.getPosY(),
+        return GameDataFactory.MeteorDataCreateInstance(meteor.getPosX(), meteor.getPosY(),
                 meteor.getRotation(), meteor.getImageWidth(),meteor.getImageHeight(),meteor.getFileImageName(),
-                ServerFactory.TextDataCreateInstance(meteor.getTextX(), meteor.getTextY(),
+                GameDataFactory.TextDataCreateInstance(meteor.getTextX(), meteor.getTextY(),
                         meteor.getTextWidth(), meteor.getTextHeight(), meteor.getText().length(),
                         meteor.getFrameImage(), meteor.getFrameNumber(), meteor.getFrameText()));
     }

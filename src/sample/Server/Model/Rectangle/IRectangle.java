@@ -14,5 +14,5 @@ public interface IRectangle {
 
     void setRecPosition(double x, double y);
     void setRecSize(double width, double height);
-    boolean RecOverlaps(ISprite other);
+    boolean RecOverlaps(IRectangle other);
 }

@@ -1,7 +1,6 @@
 package sample.Server.Model.MyImage;
 
-import javafx.scene.image.Image;
-import sample.Server.Model.ImageDate.IImageDate;
+import sample.Data.DataInterface.IImageDate;
 
 public interface IMyImage extends IImageDate {
 

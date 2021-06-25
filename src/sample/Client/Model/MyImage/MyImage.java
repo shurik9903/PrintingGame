@@ -1,7 +1,8 @@
 package sample.Client.Model.MyImage;
 
 
-import sample.Server.Model.ImageDate.IImageDate;
+import sample.Data.DataInterface.IImageDate;
+import sample.Data.GameDataFactory;
 import sample.Server.Model.ServerFactory.ServerFactory;
 
 import java.io.Serial;
@@ -17,7 +18,7 @@ public class MyImage implements IMyImage, IImageDate, Serializable {
 
     //Конструктор
     public MyImage(String fileImageName, double Width,double Height, String ImageName, boolean Type) {
-        imageDate = ServerFactory.ImageDateCreateInstance(fileImageName, Width, Height);
+        imageDate = GameDataFactory.ImageDateCreateInstance(fileImageName, Width, Height);
         this.ImageName = ImageName;
         this.Type = Type;
     }

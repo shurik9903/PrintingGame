@@ -7,13 +7,13 @@ public class VecVel implements IVecVel{
     private final IVector IV;
 
     public VecVel() {
-        IV = ServerFactory.VectorCreateInstance();
+        IV = VectorFactory.CreateInstance();
         this.VelSet(0,0);
 
     }
 
     public VecVel(double x, double y) {
-        IV = ServerFactory.VectorCreateInstance();
+        IV = VectorFactory.CreateInstance();
         this.VelSet(x, y);
     }
 

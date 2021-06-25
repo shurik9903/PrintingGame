@@ -10,6 +10,7 @@ import sample.Server.Model.Rectangle.IRectangle;
 import sample.Server.Model.ServerFactory.ServerFactory;
 import sample.Server.Model.Sprite.ISprite;
 import sample.Server.Model.Sprite.Sprite;
+import sample.Server.Model.Sprite.SpriteFactory;
 
 //Класс снаряда
 public class Projectile implements IProjectile, ISprite{
@@ -24,7 +25,7 @@ public class Projectile implements IProjectile, ISprite{
 
     //Конструктор
     public Projectile(IPlayer Player, char Letter, double BoxHeight, double BoxWidth, IMeteor meteor) {
-        basic = ServerFactory.SpriteCreateInstance("Image/bullet.png", 25);
+        basic = SpriteFactory.CreateInstance("Image/bullet.png", 25);
         this.Player = Player;
         Position();
         setVelLength(500);
@@ -49,16 +50,22 @@ public class Projectile implements IProjectile, ISprite{
     //Движение к метеориту, проверка на попадание и выход за границу игры
     @Override
     public void MoveAndFireToTarget() {
+        System.out.println(basic.getRecHeight());
+        System.out.println(basic.getRecWidth());
+        System.out.println();
         if (meteor == null) return;
-        if (overlaps(meteor) && !Miss)
+        System.out.println(RecOverlaps(meteor));
+        if (RecOverlaps(meteor) && !Miss)
             if (!meteor.ChangeImage(Letter)) Miss = true;
             else Destroy = true;
         else if (Miss) {
+            System.out.println("ewq");
             if (getPosX() < -50 ||
                     BoxWidth + 50 < getPosX() ||
                     getPosY() < -50 ||
                     BoxHeight + 50 < getPosY()) Destroy = true;
         } else {
+            System.out.println("qwe");
             setRotation(getAngleToTarget(meteor));
             setVelAngle(getRotation());
         }
@@ -127,7 +134,7 @@ public class Projectile implements IProjectile, ISprite{
     }
 
     @Override
-    public boolean RecOverlaps(ISprite other) {
+    public boolean RecOverlaps(IRectangle other) {
         return basic.RecOverlaps(other);
     }
 
@@ -267,11 +274,6 @@ public class Projectile implements IProjectile, ISprite{
     }
 
     @Override
-    public boolean overlaps(ISprite other) {
-        return basic.overlaps(other);
-    }
-
-    @Override
     public double getAngleToTarget(ISprite other) {
         return basic.getAngleToTarget(other);
     }
@@ -283,6 +285,7 @@ public class Projectile implements IProjectile, ISprite{
 
     @Override
     public void setRotation(double rotation) {
+        System.out.println("Rot: " + rotation);
         basic.setRotation(rotation);
     }
 

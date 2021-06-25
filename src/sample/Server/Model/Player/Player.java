@@ -1,15 +1,16 @@
 package sample.Server.Model.Player;
 
-import javafx.scene.image.Image;
 import sample.Data.DataInterface.IGameData;
-import sample.Data.GameData;
-import sample.Server.Model.Aim.IAim;
+import sample.Data.GameDataFactory;
+import sample.Server.Model.EnterToNumber.EnterToNumberFactory;
 import sample.Server.Model.EnterToNumber.IEnterToNumber;
-import sample.Server.Model.ImageDate.IImageDate;
+import sample.Data.DataInterface.IImageDate;
 import sample.Server.Model.Meteor.IMeteor;
 import sample.Server.Model.Projectile.IProjectile;
+import sample.Server.Model.Rectangle.IRectangle;
 import sample.Server.Model.ServerFactory.ServerFactory;
 import sample.Server.Model.Sprite.ISprite;
+import sample.Server.Model.Sprite.SpriteFactory;
 
 import java.util.ArrayList;
 
@@ -25,15 +26,15 @@ public class Player implements IPlayer, ISprite, IEnterToNumber, IPlayerAim  {
     private IGameData gameData;
 
     public Player(double Size, double WindowSizeX, double WindowSizeY){
-        basic = ServerFactory.SpriteCreateInstance("Image/Gun.png", Size);
-        gameData = ServerFactory.GameDataCreateInstance();
+        basic = SpriteFactory.CreateInstance("Image/Gun.png", Size);
+        gameData = GameDataFactory.GameDataCreateInstance();
         Energy = 10;
         setPosX(WindowSizeX);
         setPosY(WindowSizeY);
         setRecSize(Size, Size);
-        EnterNumber = ServerFactory.EnterToNumberCreateInstance(
+        EnterNumber = EnterToNumberFactory.CreateInstance(
                 30, 30, getPosX(),getPosY(),getImageWidth(),getImageHeight());
-        playerAim = ServerFactory.PlayerAimCreateInstance(WindowSizeX, WindowSizeY, getPosY());
+        playerAim = PlayerAimFactory.CreateInstance(WindowSizeX, WindowSizeY, getPosY());
         KeyList = new ArrayList<>();
         ProjectileList = new ArrayList<>();
     }
@@ -125,7 +126,7 @@ public class Player implements IPlayer, ISprite, IEnterToNumber, IPlayerAim  {
     }
 
     @Override
-    public boolean RecOverlaps(ISprite other) {
+    public boolean RecOverlaps(IRectangle other) {
         return basic.RecOverlaps(other);
     }
 
@@ -265,11 +266,6 @@ public class Player implements IPlayer, ISprite, IEnterToNumber, IPlayerAim  {
     }
 
     @Override
-    public boolean overlaps(ISprite other) {
-        return basic.overlaps(other);
-    }
-
-    @Override
     public double getAngleToTarget(ISprite other) {
         return basic.getAngleToTarget(other);
     }
@@ -302,11 +298,6 @@ public class Player implements IPlayer, ISprite, IEnterToNumber, IPlayerAim  {
     @Override
     public void setPlayerAimImage(String fileImageName) {
         playerAim.setPlayerAimImage(fileImageName);
-    }
-
-    @Override
-    public boolean PlayerAimOverlaps(ISprite other) {
-        return playerAim.PlayerAimOverlaps(other);
     }
 
     @Override
@@ -386,7 +377,7 @@ public class Player implements IPlayer, ISprite, IEnterToNumber, IPlayerAim  {
     }
 
     @Override
-    public boolean PlayerAimRecOverlaps(ISprite other) {
+    public boolean PlayerAimRecOverlaps(IRectangle other) {
         return playerAim.PlayerAimRecOverlaps(other);
     }
 
